@@ -1,0 +1,191 @@
+\documentclass[11pt, a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry} %Sets proper 1-inch margins. 
+\usepackage{amsmath} %Only load this if you are using math/equations.
+\usepackage{graphicx} %Only need to call this if inserting images.
+\usepackage{caption} %Only need to call this if inserting captions.
+\usepackage{float} %Allows the use of the [H] specifier. 
+\graphicspath{{C:/Users/jonah/Pictures/meme/}} %Sets the working directory for images.
+\usepackage[colorlinks,citecolor=blue,linkcolor=blue,urlcolor=blue]{hyperref} %Allows for the embedding of urls. 
+\usepackage{setspace}
+\usepackage{blindtext}
+
+\pagenumbering{arabic}
+
+\usepackage{fancyhdr}
+
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{Jonah Edmundson \\ Dec 2022}
+\lhead{\thepage}
+
+\newcommand{\comment}[1]{}
+
+\usepackage{Sweave}
+\begin{document}
+\input{datacleaning-concordance}
+
+\begin{center}
+\Large{\textsc{Data Cleaning}}
+\par
+\normalsize{\textsc{for}}
+\par
+\large{\textsc{Kelowna Weather-Crash Project}}
+\end{center}
+
+
+\vspace{0.917 pc} %Creates a paragraph line break. 
+
+\section*{Section 1}
+
+
+will have to combine kelowna with kelowna UBCO to get precip. amount
+
+
+\begin{Schunk}
+\begin{Sinput}
+> test = read.csv('../weatherdata/en_climate_hourly_BC_1123939_01-2017_P1H.csv')
+> summary(test)
+\end{Sinput}
+\begin{Soutput}
+ Longitude..x.     Latitude..y.    Station.Name   Climate.ID     
+ Min.   :-119.4   Min.   :49.96   KELOWNA:744   Min.   :1123939  
+ 1st Qu.:-119.4   1st Qu.:49.96                 1st Qu.:1123939  
+ Median :-119.4   Median :49.96                 Median :1123939  
+ Mean   :-119.4   Mean   :49.96                 Mean   :1123939  
+ 3rd Qu.:-119.4   3rd Qu.:49.96                 3rd Qu.:1123939  
+ Max.   :-119.4   Max.   :49.96                 Max.   :1123939  
+                                                                 
+         Date.Time..LST.      Year          Month        Day       Time..LST. 
+ 2017-01-01 00:00:  1    Min.   :2017   Min.   :1   Min.   : 1   00:00  : 31  
+ 2017-01-01 01:00:  1    1st Qu.:2017   1st Qu.:1   1st Qu.: 8   01:00  : 31  
+ 2017-01-01 02:00:  1    Median :2017   Median :1   Median :16   02:00  : 31  
+ 2017-01-01 03:00:  1    Mean   :2017   Mean   :1   Mean   :16   03:00  : 31  
+ 2017-01-01 04:00:  1    3rd Qu.:2017   3rd Qu.:1   3rd Qu.:24   04:00  : 31  
+ 2017-01-01 05:00:  1    Max.   :2017   Max.   :1   Max.   :31   05:00  : 31  
+ (Other)         :738                                            (Other):558  
+   Temp...C.       Temp.Flag      Dew.Point.Temp...C. Dew.Point.Temp.Flag
+ Min.   :-24.600   Mode:logical   Min.   :-26.700     Mode:logical       
+ 1st Qu.:-11.025   NA's:744       1st Qu.:-14.200     NA's:744           
+ Median : -3.900                  Median : -7.200                        
+ Mean   : -6.047                  Mean   : -8.566                        
+ 3rd Qu.:  0.100                  3rd Qu.: -1.500                        
+ Max.   :  4.700                  Max.   :  0.800                        
+                                                                         
+  Rel.Hum....     Rel.Hum.Flag   Precip..Amount..mm. Precip..Amount.Flag
+ Min.   : 53.00   Mode:logical   Min.   :0.000000    Mode:logical       
+ 1st Qu.: 77.00   NA's:744       1st Qu.:0.000000    NA's:744           
+ Median : 84.00                  Median :0.000000                       
+ Mean   : 83.02                  Mean   :0.003763                       
+ 3rd Qu.: 90.00                  3rd Qu.:0.000000                       
+ Max.   :100.00                  Max.   :1.000000                       
+                                                                        
+ Wind.Dir..10s.deg. Wind.Dir.Flag Wind.Spd..km.h.  Wind.Spd.Flag
+ Min.   : 1.00       :663         Min.   : 0.000    :740        
+ 1st Qu.: 6.00      M: 81         1st Qu.: 4.000   M:  4        
+ Median :15.00                    Median : 5.000                
+ Mean   :16.45                    Mean   : 7.824                
+ 3rd Qu.:19.00                    3rd Qu.:11.000                
+ Max.   :36.00                    Max.   :45.000                
+ NA's   :211                      NA's   :4                     
+ Visibility..km. Visibility.Flag Stn.Press..kPa. Stn.Press.Flag   Hmdx        
+ Min.   : 0.80   Mode:logical    Min.   :94.22   Mode:logical   Mode:logical  
+ 1st Qu.:16.10   NA's:744        1st Qu.:95.95   NA's:744       NA's:744      
+ Median :16.10                   Median :97.14                                
+ Mean   :14.69                   Mean   :96.90                                
+ 3rd Qu.:16.10                   3rd Qu.:97.84                                
+ Max.   :16.10                   Max.   :98.86                                
+                                                                              
+ Hmdx.Flag        Wind.Chill     Wind.Chill.Flag         Weather   
+ Mode:logical   Min.   :-31.00   Mode:logical    Fog         : 60  
+ NA's:744       1st Qu.:-17.00   NA's:744        Snow        : 60  
+                Median :-12.00                   Rain        :  8  
+                Mean   :-12.66                   Rain,Fog    :  2  
+                3rd Qu.: -7.00                   Freezing Fog:  1  
+                Max.   : -1.00                   (Other)     :  2  
+                NA's   :282                      NA's        :611  
+\end{Soutput}
+\begin{Sinput}
+> head(test, 10)
+\end{Sinput}
+\begin{Soutput}
+   Longitude..x. Latitude..y. Station.Name Climate.ID  Date.Time..LST. Year
+1        -119.38        49.96      KELOWNA    1123939 2017-01-01 00:00 2017
+2        -119.38        49.96      KELOWNA    1123939 2017-01-01 01:00 2017
+3        -119.38        49.96      KELOWNA    1123939 2017-01-01 02:00 2017
+4        -119.38        49.96      KELOWNA    1123939 2017-01-01 03:00 2017
+5        -119.38        49.96      KELOWNA    1123939 2017-01-01 04:00 2017
+6        -119.38        49.96      KELOWNA    1123939 2017-01-01 05:00 2017
+7        -119.38        49.96      KELOWNA    1123939 2017-01-01 06:00 2017
+8        -119.38        49.96      KELOWNA    1123939 2017-01-01 07:00 2017
+9        -119.38        49.96      KELOWNA    1123939 2017-01-01 08:00 2017
+10       -119.38        49.96      KELOWNA    1123939 2017-01-01 09:00 2017
+   Month Day Time..LST. Temp...C. Temp.Flag Dew.Point.Temp...C.
+1      1   1      00:00      -5.1        NA                -5.6
+2      1   1      01:00      -4.7        NA                -5.2
+3      1   1      02:00      -4.0        NA                -4.8
+4      1   1      03:00      -4.2        NA                -5.2
+5      1   1      04:00      -4.5        NA                -5.7
+6      1   1      05:00      -4.1        NA                -5.6
+7      1   1      06:00      -3.8        NA                -5.5
+8      1   1      07:00      -3.3        NA                -5.5
+9      1   1      08:00      -3.5        NA                -5.4
+10     1   1      09:00      -3.1        NA                -5.9
+   Dew.Point.Temp.Flag Rel.Hum.... Rel.Hum.Flag Precip..Amount..mm.
+1                   NA          96           NA                   0
+2                   NA          96           NA                   0
+3                   NA          94           NA                   0
+4                   NA          93           NA                   0
+5                   NA          92           NA                   0
+6                   NA          89           NA                   0
+7                   NA          88           NA                   0
+8                   NA          85           NA                   0
+9                   NA          87           NA                   0
+10                  NA          81           NA                   0
+   Precip..Amount.Flag Wind.Dir..10s.deg. Wind.Dir.Flag Wind.Spd..km.h.
+1                   NA                 36                             5
+2                   NA                 35                            13
+3                   NA                 35                            17
+4                   NA                 NA                             0
+5                   NA                  4                             5
+6                   NA                  3                             8
+7                   NA                  4                            11
+8                   NA                  4                            15
+9                   NA                  1                            21
+10                  NA                  3                            15
+   Wind.Spd.Flag Visibility..km. Visibility.Flag Stn.Press..kPa. Stn.Press.Flag
+1                            3.2              NA           95.56             NA
+2                            3.2              NA           95.58             NA
+3                            8.1              NA           95.58             NA
+4                            8.1              NA           95.64             NA
+5                            4.8              NA           95.65             NA
+6                           16.1              NA           95.66             NA
+7                           16.1              NA           95.69             NA
+8                           16.1              NA           95.75             NA
+9                            8.1              NA           95.79             NA
+10                          16.1              NA           95.83             NA
+   Hmdx Hmdx.Flag Wind.Chill Wind.Chill.Flag Weather
+1    NA        NA         -7              NA    Snow
+2    NA        NA        -10              NA    Snow
+3    NA        NA        -10              NA    Snow
+4    NA        NA         NA              NA    Snow
+5    NA        NA         -7              NA    Snow
+6    NA        NA         -8              NA    Snow
+7    NA        NA         -8              NA    Snow
+8    NA        NA         -8              NA    Snow
+9    NA        NA        -10              NA    Snow
+10   NA        NA         -8              NA    Snow
+\end{Soutput}
+\end{Schunk}
+
+
+
+
+\begin{Schunk}
+\begin{Sinput}
+> #save(alldata, file = "../rda_files/all_data.rda")
+\end{Sinput}
+\end{Schunk}
+
+
+\end{document}

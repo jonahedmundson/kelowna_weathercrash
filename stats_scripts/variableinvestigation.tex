@@ -1,0 +1,59 @@
+\documentclass[11pt, a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry} %Sets proper 1-inch margins. 
+\usepackage{amsmath} %Only load this if you are using math/equations.
+\usepackage{graphicx} %Only need to call this if inserting images.
+\usepackage{caption} %Only need to call this if inserting captions.
+\usepackage{float} %Allows the use of the [H] specifier. 
+\graphicspath{{C:/Users/jonah/Pictures/meme/}} %Sets the working directory for images.
+\usepackage[colorlinks,citecolor=blue,linkcolor=blue,urlcolor=blue]{hyperref} %Allows for the embedding of urls. 
+\usepackage{setspace}
+\usepackage{blindtext}
+
+\pagenumbering{arabic}
+
+\usepackage{fancyhdr}
+
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{Jonah Edmundson \\ Dec 2022}
+\lhead{\thepage}
+
+\newcommand{\comment}[1]{}
+
+\usepackage{Sweave}
+\begin{document}
+\input{variableinvestigation-concordance}
+
+\begin{center}
+\Large{\textsc{Variable Investigation}}
+\par
+\normalsize{\textsc{for}}
+\par
+\large{\textsc{Kelowna Weather-Crash Project}}
+\end{center}
+
+
+\vspace{0.917 pc} %Creates a paragraph line break. 
+
+\section*{Variable 1}
+
+
+
+
+\begin{Schunk}
+\begin{Sinput}
+> load_first_object <- function(fname){
++   #this function was written by Dr. Rhonda Rosychuk at the U of A 
++   e <- new.env(parent = parent.frame())
++   load(fname, e)
++   return(e[[ls(e)[1]]])
++ }
+> 
+> #weatherdata = load_first_object("X.rda")
+> 
+\end{Sinput}
+\end{Schunk}
+
+
+\end{document}
