@@ -1,0 +1,6 @@
+- merge weather and crash data into one .rda file
+
+- make folders:
+	- stats_scripts
+	- rda_files
+	- Reports
