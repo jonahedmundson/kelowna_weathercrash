@@ -42,6 +42,7 @@ will have to combine kelowna with kelowna UBCO to get precip. amount
 
 remove all 'flag' variables
 
+group weather data based on time groups in crash dataset, then join weather data on crash table (1 case = 1 crash, what was the weather like when this crash occurred?)
 
 <<chunk1, echo=TRUE>>=
 for i in c(2017:2021){

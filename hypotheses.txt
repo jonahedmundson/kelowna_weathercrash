@@ -1,0 +1,13 @@
+1. Visibility on a given day will be inversely correlated with # of crashes per day.
+
+2. Temperature will have a weak correlation with # of crashes per day (people drive more recklessly in the summer? also tourism = more traffic in summer). 
+
+3. Precipitation will be correlated with # of crashes per day. 
+
+4. Summer will have more crashes involving cyclists and motorcyclists. 
+
+5. Crash fatality will be higher on weekends when more people are driving under the influence. 
+
+6. Fatal, more severe crashes occur proportionately more often at nighttime, as visibility is reduced due to lack of sunlight. 
+
+7. Small spike in crashes after October 17, 2018, as this is the day cannabis was legalized. (https://en.wikipedia.org/wiki/Cannabis_in_Canada)

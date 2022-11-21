@@ -100,7 +100,7 @@ For example, if the outside temperature is -10 °C and the wind chill is -20, i
 
 Crash data from insurance companies is generally more comprehensive than police data.
 
-From the ICBC website:
+From the [ICBC website](http://www.llbc.leg.bc.ca/public/pubdocs/bcdocs2019/690888/quick-statistics.pdf):
 
 > ICBC crash data is generally much larger in volume than police crash data because:
 - Basic insurance coverage through ICBC is mandatory; therefore crash occurrences are reported to ICBC.
@@ -109,6 +109,13 @@ are attended. In addition, the number of reports submitted by individuals to pol
 mandatory that a crash be reported to police.
 
 ![](./misc/ICBC_data_dictionary.png)
+
+The definition for the `crash_severity` variable is cut-off, so here is the full definition:
+
+> The level of crash severity:
+- Casualty Crash: A crash resulting in an injury or fatality.
+- Property Damage Only Crash: A crash resulting in material damages to property (vehicle or non-vehicle, such as structures) with no injuries or
+fatalities.
 
 
 # Data Cleaning
@@ -147,3 +154,13 @@ Relevant file: [TBA](./NULL).
 
 
 # Conclusion
+
+
+
+# Other Relevant Studies
+
+https://github.com/tobystaines/RoadAccidentsPODS/blob/master/Environmental%20Conditions%20and%20Road%20Traffic%20Collisions%20in%20the%20UK%20v1.2.pdf
+
+
+
+https://www.sciencedirect.com/science/article/pii/S0001457518308455 
