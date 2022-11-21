@@ -44,9 +44,15 @@ remove all 'flag' variables
 
 
 <<chunk1, echo=TRUE>>=
+for i in c(2017:2021){
+  for j in c(1:12){
+  temp = 
+  }
+}
 test = read.csv('../weatherdata/en_climate_hourly_BC_1123939_01-2017_P1H.csv')
-summary(test)
 head(test, 10)
+#c('Temp.Flag', 'Dew.Point.Temp.Flag', 'Rel.Hum.Flag', 'Precip..Amount..mm.', 'Precip..Amount.Flag', 'Wind.Dir.Flag', 'Wind.Spd.Flag', 'Visibility.Flag', 'Stn.Press.Flag', 'Hmdx', 'Hmdx.Flag', 'Wind.Chill.Flag')
+#subset(df, select = -c(var1, var3))
 @
 
 

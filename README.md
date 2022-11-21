@@ -113,6 +113,8 @@ mandatory that a crash be reported to police.
 
 # Data Cleaning
 
+Relevant file: [Data Cleaning](./datacleaning.pdf).
+
 ## Weather data
 
 <!-- combine with UBCO to get precip amount -->
@@ -124,4 +126,24 @@ mandatory that a crash be reported to police.
 
 # Statistical Analysis
 
-## Title 1
+## Variable Exploration
+
+Relevant file: [Variable Exploration](./variableinvestigation.pdf).
+
+
+## Linear Modelling
+
+Relevant file: [TBA](./NULL).
+
+
+## Machine Learning Approach
+
+Relevant file: [TBA](./NULL).
+
+
+# Results and Discussion
+
+
+
+
+# Conclusion
