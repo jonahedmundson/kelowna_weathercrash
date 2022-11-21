@@ -113,7 +113,7 @@ mandatory that a crash be reported to police.
 
 # Data Cleaning
 
-Relevant file: [Data Cleaning](./datacleaning.pdf).
+Relevant file: [Data Cleaning](./stats_scripts/datacleaning/datacleaning.pdf).
 
 ## Weather data
 
@@ -128,7 +128,7 @@ Relevant file: [Data Cleaning](./datacleaning.pdf).
 
 ## Variable Exploration
 
-Relevant file: [Variable Exploration](./variableinvestigation.pdf).
+Relevant file: [Variable Exploration](./stats_scripts/variableinvestigation/variableinvestigation.pdf).
 
 
 ## Linear Modelling
