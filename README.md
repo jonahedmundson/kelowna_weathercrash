@@ -163,4 +163,32 @@ https://github.com/tobystaines/RoadAccidentsPODS/blob/master/Environmental%20Con
 
 
 
-https://www.sciencedirect.com/science/article/pii/S0001457518308455 
+https://www.sciencedirect.com/science/article/pii/S0001457518308455
+
+
+
+https://ehjournal.biomedcentral.com/articles/10.1186/s12940-016-0189-x
+
+
+
+https://www.sciencedirect.com/science/article/abs/pii/S0022437514000024
+
+
+
+https://journals.sagepub.com/doi/abs/10.3141/1621-02
+
+
+
+https://journals.sagepub.com/doi/abs/10.3141/2055-16
+
+
+
+https://onlinelibrary.wiley.com/doi/abs/10.1002/ajim.22849
+
+
+
+https://www.mdpi.com/2220-9964/4/4/2681
+
+
+
+https://trid.trb.org/view/1396115

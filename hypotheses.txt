@@ -11,3 +11,5 @@
 6. Fatal, more severe crashes occur proportionately more often at nighttime, as visibility is reduced due to lack of sunlight. 
 
 7. Small spike in crashes after October 17, 2018, as this is the day cannabis was legalized. (https://en.wikipedia.org/wiki/Cannabis_in_Canada)
+
+8. Single-vehicle crashes should be more proportionally higher during adverse weather, especially snow/ice conditions. 

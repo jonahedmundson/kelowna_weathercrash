@@ -44,6 +44,8 @@ remove all 'flag' variables
 
 group weather data based on time groups in crash dataset, then join weather data on crash table (1 case = 1 crash, what was the weather like when this crash occurred?)
 
+is 'weather' reliable? may need to correct it if there is precipitation but NA for 'weather'
+
 <<chunk1, echo=TRUE>>=
 for i in c(2017:2021){
   for j in c(1:12){
