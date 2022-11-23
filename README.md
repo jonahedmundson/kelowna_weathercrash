@@ -124,7 +124,7 @@ Relevant file: [Data Cleaning](./stats_scripts/datacleaning/datacleaning.pdf).
 
 ## Weather data
 
-<!-- combine with UBCO to get precip amount -->
+
 
 
 ## Crash Data

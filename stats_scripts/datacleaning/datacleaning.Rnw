@@ -38,8 +38,6 @@
 \section*{Section 1}
 
 
-will have to combine kelowna with kelowna UBCO to get precip. amount
-
 remove all 'flag' variables
 
 group weather data based on time groups in crash dataset, then join weather data on crash table (1 case = 1 crash, what was the weather like when this crash occurred?)
@@ -47,15 +45,32 @@ group weather data based on time groups in crash dataset, then join weather data
 is 'weather' reliable? may need to correct it if there is precipitation but NA for 'weather'
 
 <<chunk1, echo=TRUE>>=
-for i in c(2017:2021){
-  for j in c(1:12){
-  temp = 
+fullWeather = c()
+for (i in c(2017:2021)){
+  for (j in c(1:12)){
+    temp = subset(read.csv(paste0('../../weatherdata/en_climate_hourly_BC_1123939_', 
+      sprintf("%02d", j), '-', i, '_P1H.csv')), 
+      select = - c(`Temp.Flag`, 
+      `Dew.Point.Temp.Flag`, `Rel.Hum.Flag`,
+      `Precip..Amount.Flag`, `Wind.Dir.Flag`, 
+      `Wind.Spd.Flag`, `Visibility.Flag`, 
+      `Stn.Press.Flag`, `Hmdx`, `Hmdx.Flag`, `Wind.Chill.Flag`))
+    fullWeather = rbind(fullWeather, temp)
   }
 }
-test = read.csv('../weatherdata/en_climate_hourly_BC_1123939_01-2017_P1H.csv')
-head(test, 10)
-#c('Temp.Flag', 'Dew.Point.Temp.Flag', 'Rel.Hum.Flag', 'Precip..Amount..mm.', 'Precip..Amount.Flag', 'Wind.Dir.Flag', 'Wind.Spd.Flag', 'Visibility.Flag', 'Stn.Press.Flag', 'Hmdx', 'Hmdx.Flag', 'Wind.Chill.Flag')
-#subset(df, select = -c(var1, var3))
+  
+nrow(fullWeather)
+24*365*5 + 24 #2020 was a leap year
+
+summary(fullWeather)
+@
+
+
+<<chunk2, echo=TRUE>>=
+fullCrash = subset(read.csv('../../crashdata/Southern Interior_Full Data_data.csv'), 
+          select = - c(`Crash.Breakdown.2`, `Region`,
+                       `Municipality.Name..ifnull.`))
+summary(fullCrash)
 @
 
 

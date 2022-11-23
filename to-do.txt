@@ -7,5 +7,6 @@
 	
 analysis --> breakdown trends by variable 
 
+upon completion, make a tableau dashboard with key graphics from reports to stand alongside project (link from README)
 
 upon completion, write an article about it on medium (towards data science)
