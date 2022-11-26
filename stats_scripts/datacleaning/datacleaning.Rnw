@@ -44,6 +44,8 @@ group weather data based on time groups in crash dataset, then join weather data
 
 is 'weather' reliable? may need to correct it if there is precipitation but NA for 'weather'
 
+Loading in weather data:
+
 <<chunk1, echo=TRUE>>=
 fullWeather = c()
 for (i in c(2017:2021)){
@@ -65,8 +67,108 @@ nrow(fullWeather)
 summary(fullWeather)
 @
 
+\pagebreak
+
+There are 22 empty strings in the \texttt{Weather} variable that should be NAs.
 
 <<chunk2, echo=TRUE>>=
+length(fullWeather[fullWeather$Weather == "" &
+              is.na(fullWeather$Weather) == FALSE, "Weather"])
+
+## SETTING EMPTY TO NA
+fullWeather$Weather[fullWeather$Weather == "" &
+              is.na(fullWeather$Weather) == FALSE] = NA
+
+## CHECKING
+length(fullWeather[fullWeather$Weather == "" &
+              is.na(fullWeather$Weather) == FALSE, "Weather"])
+@
+
+Need to relevel factor to remove empty string option:
+
+<<chunk3, echo=TRUE>>=
+"" %in% levels(fullWeather$Weather)
+fullWeather$Weather = droplevels(fullWeather$Weather)
+"" %in% levels(fullWeather$Weather)
+@
+
+
+\pagebreak
+
+Testing if any hours have precipitation without the appropriate \texttt{Weather} variable:
+
+<<chunk4, echo=TRUE>>=
+precip = fullWeather[fullWeather$Precip..Amount..mm. > 0 &
+                      is.na(fullWeather$Precip..Amount..mm.) == FALSE, 
+                     c("Precip..Amount..mm.", "Weather")]
+summary(precip)
+
+levels(fullWeather$Weather)
+@
+
+FINISH THIS***********
+
+\pagebreak
+
+Changing \texttt{Weather} factor variable to many indicator variables. 
+
+<<chunk5>>=
+#creating columns
+lst = c()
+for (i in levels(fullWeather$Weather)){
+  temp = unlist(strsplit(as.character(i), ","))
+  lst = c(lst, temp)
+}
+lst = lst[!(duplicated(lst))] #removing duplicates
+lst
+
+for (i in lst){
+  fullWeather[, i] = factor("0", levels = c("0", "1"))
+}
+
+names(fullWeather)
+
+############
+
+#assigning values
+for (i in 1:nrow(fullWeather)){
+  if (!is.na(fullWeather$Weather[i])){
+    temp = as.character(fullWeather$Weather[i])
+    temp = unlist(strsplit(temp, ","))
+    for (j in temp){
+      fullWeather[i, j] = "1"
+    }
+  }
+}
+
+###########
+
+#collapsing to only: Rain, Snow, Thunderstorms, Fog, Freezing Rain
+fullWeather$Rain[fullWeather$'Moderate Rain' == 1] = 1
+fullWeather$Rain[fullWeather$'Heavy Rain' == 1] = 1
+fullWeather$Snow[fullWeather$'Moderate Snow' == 1] = 1
+fullWeather$Snow[fullWeather$'Heavy Snow' == 1] = 1
+fullWeather$Snow[fullWeather$'Blowing Snow' == 1] = 1
+fullWeather$Fog[fullWeather$'Freezing Fog' == 1] = 1
+fullWeather$Fog[fullWeather$'Haze' == 1] = 1
+
+fullWeather = subset(fullWeather, select = - c(`Moderate Rain`, 
+              `Heavy Rain`, `Moderate Snow`, `Heavy Snow`, 
+              `Blowing Snow`, `Freezing Fog`, `Haze`))
+
+summary(fullWeather[,c("Weather", "Rain", "Fog", "Snow", 
+                       "Thunderstorms", "Freezing Rain")])
+@
+
+I realize that I could have used a regex solution here to shorten the code, but the solution above is more general. This is important if I wanted to add/remove groups to/from the reduced list of weather types later on (ie. adding `Heavy Snow').
+\par
+*Note that I kept \texttt{Rain} and \texttt{Freezing Rain} separate and mutually exclusive. Therefore, if an hour had freezing rain, the indicator variables will have ``1" for \texttt{Freezing Rain}, and a ``0" for \texttt{Rain}.
+
+\pagebreak
+
+Loading in crash data:
+
+<<chunkX, echo=TRUE>>=
 fullCrash = subset(read.csv('../../crashdata/Southern Interior_Full Data_data.csv'), 
           select = - c(`Crash.Breakdown.2`, `Region`,
                        `Municipality.Name..ifnull.`))

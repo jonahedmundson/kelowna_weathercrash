@@ -45,6 +45,8 @@ group weather data based on time groups in crash dataset, then join weather data
 
 is 'weather' reliable? may need to correct it if there is precipitation but NA for 'weather'
 
+Loading in weather data:
+
 \begin{Schunk}
 \begin{Sinput}
 > fullWeather = c()
@@ -118,6 +120,179 @@ is 'weather' reliable? may need to correct it if there is precipitation but NA f
 \end{Soutput}
 \end{Schunk}
 
+\pagebreak
+
+There are 22 empty strings in the \texttt{Weather} variable that should be NAs.
+
+\begin{Schunk}
+\begin{Sinput}
+> length(fullWeather[fullWeather$Weather == "" &
++               is.na(fullWeather$Weather) == FALSE, "Weather"])
+\end{Sinput}
+\begin{Soutput}
+[1] 22
+\end{Soutput}
+\begin{Sinput}
+> ## SETTING EMPTY TO NA
+> fullWeather$Weather[fullWeather$Weather == "" &
++               is.na(fullWeather$Weather) == FALSE] = NA
+> ## CHECKING
+> length(fullWeather[fullWeather$Weather == "" &
++               is.na(fullWeather$Weather) == FALSE, "Weather"])
+\end{Sinput}
+\begin{Soutput}
+[1] 0
+\end{Soutput}
+\end{Schunk}
+
+Need to relevel factor to remove empty string option:
+
+\begin{Schunk}
+\begin{Sinput}
+> "" %in% levels(fullWeather$Weather)
+\end{Sinput}
+\begin{Soutput}
+[1] TRUE
+\end{Soutput}
+\begin{Sinput}
+> fullWeather$Weather = droplevels(fullWeather$Weather)
+> "" %in% levels(fullWeather$Weather)
+\end{Sinput}
+\begin{Soutput}
+[1] FALSE
+\end{Soutput}
+\end{Schunk}
+
+
+\pagebreak
+
+Testing if any hours have precipitation without the appropriate \texttt{Weather} variable:
+
+\begin{Schunk}
+\begin{Sinput}
+> precip = fullWeather[fullWeather$Precip..Amount..mm. > 0 &
++                       is.na(fullWeather$Precip..Amount..mm.) == FALSE, 
++                      c("Precip..Amount..mm.", "Weather")]
+> summary(precip)
+\end{Sinput}
+\begin{Soutput}
+ Precip..Amount..mm.              Weather   
+ Min.   :0.2000      Rain             :936  
+ 1st Qu.:0.2000      Snow             :472  
+ Median :0.5000      Rain,Fog         :159  
+ Mean   :0.6199      Moderate Rain    : 61  
+ 3rd Qu.:0.8000      Moderate Rain,Fog: 51  
+ Max.   :7.1000      (Other)          : 84  
+                     NA's             :356  
+\end{Soutput}
+\begin{Sinput}
+> levels(fullWeather$Weather)
+\end{Sinput}
+\begin{Soutput}
+ [1] "Fog"                             "Freezing Fog"                   
+ [3] "Freezing Rain,Snow"              "Haze"                           
+ [5] "Rain"                            "Rain,Fog"                       
+ [7] "Snow"                            "Moderate Snow"                  
+ [9] "Rain,Snow"                       "Moderate Rain"                  
+[11] "Moderate Rain,Fog"               "Thunderstorms"                  
+[13] "Thunderstorms,Heavy Rain"        "Thunderstorms,Heavy Rain,Fog"   
+[15] "Thunderstorms,Rain"              "Thunderstorms,Rain,Fog"         
+[17] "Heavy Snow"                      "Thunderstorms,Moderate Rain"    
+[19] "Freezing Rain,Fog"               "Heavy Rain"                     
+[21] "Freezing Rain"                   "Snow,Blowing Snow"              
+[23] "Thunderstorms,Moderate Rain,Fog" "Heavy Rain,Fog"                 
+\end{Soutput}
+\end{Schunk}
+
+FINISH THIS***********
+
+\pagebreak
+
+Changing \texttt{Weather} factor variable to many indicator variables. 
+
+\begin{Schunk}
+\begin{Sinput}
+> #creating columns
+> lst = c()
+> for (i in levels(fullWeather$Weather)){
++   temp = unlist(strsplit(as.character(i), ","))
++   lst = c(lst, temp)
++ }
+> lst = lst[!(duplicated(lst))] #removing duplicates
+> lst
+\end{Sinput}
+\begin{Soutput}
+ [1] "Fog"           "Freezing Fog"  "Freezing Rain" "Snow"         
+ [5] "Haze"          "Rain"          "Moderate Snow" "Moderate Rain"
+ [9] "Thunderstorms" "Heavy Rain"    "Heavy Snow"    "Blowing Snow" 
+\end{Soutput}
+\begin{Sinput}
+> for (i in lst){
++   fullWeather[, i] = factor("0", levels = c("0", "1"))
++ }
+> names(fullWeather)
+\end{Sinput}
+\begin{Soutput}
+ [1] "Longitude..x."       "Latitude..y."        "Station.Name"       
+ [4] "Climate.ID"          "Date.Time..LST."     "Year"               
+ [7] "Month"               "Day"                 "Time..LST."         
+[10] "Temp...C."           "Dew.Point.Temp...C." "Rel.Hum...."        
+[13] "Precip..Amount..mm." "Wind.Dir..10s.deg."  "Wind.Spd..km.h."    
+[16] "Visibility..km."     "Stn.Press..kPa."     "Wind.Chill"         
+[19] "Weather"             "Fog"                 "Freezing Fog"       
+[22] "Freezing Rain"       "Snow"                "Haze"               
+[25] "Rain"                "Moderate Snow"       "Moderate Rain"      
+[28] "Thunderstorms"       "Heavy Rain"          "Heavy Snow"         
+[31] "Blowing Snow"       
+\end{Soutput}
+\begin{Sinput}
+> ############
+> 
+> #assigning values
+> for (i in 1:nrow(fullWeather)){
++   if (!is.na(fullWeather$Weather[i])){
++     temp = as.character(fullWeather$Weather[i])
++     temp = unlist(strsplit(temp, ","))
++     for (j in temp){
++       fullWeather[i, j] = "1"
++     }
++   }
++ }
+> ###########
+> 
+> #collapsing to only: Rain, Snow, Thunderstorms, Fog, Freezing Rain
+> fullWeather$Rain[fullWeather$'Moderate Rain' == 1] = 1
+> fullWeather$Rain[fullWeather$'Heavy Rain' == 1] = 1
+> fullWeather$Snow[fullWeather$'Moderate Snow' == 1] = 1
+> fullWeather$Snow[fullWeather$'Heavy Snow' == 1] = 1
+> fullWeather$Snow[fullWeather$'Blowing Snow' == 1] = 1
+> fullWeather$Fog[fullWeather$'Freezing Fog' == 1] = 1
+> fullWeather$Fog[fullWeather$'Haze' == 1] = 1
+> fullWeather = subset(fullWeather, select = - c(`Moderate Rain`, 
++               `Heavy Rain`, `Moderate Snow`, `Heavy Snow`, 
++               `Blowing Snow`, `Freezing Fog`, `Haze`))
+> summary(fullWeather[,c("Weather", "Rain", "Fog", "Snow", 
++                        "Thunderstorms", "Freezing Rain")])
+\end{Sinput}
+\begin{Soutput}
+     Weather      Rain      Fog       Snow      Thunderstorms Freezing Rain
+ Rain    : 2069   0:41370   0:41429   0:42132   0:43794       0:43819      
+ Snow    : 1662   1: 2454   1: 2395   1: 1692   1:   30       1:    5      
+ Haze    : 1187                                                            
+ Fog     :  873                                                            
+ Rain,Fog:  233                                                            
+ (Other) :  224                                                            
+ NA's    :37576                                                            
+\end{Soutput}
+\end{Schunk}
+
+I realize that I could have used a regex solution here to shorten the code, but the solution above is more general. This is important if I wanted to add/remove groups to/from the reduced list of weather types later on (ie. adding `Heavy Snow').
+\par
+*Note that I kept \texttt{Rain} and \texttt{Freezing Rain} separate and mutually exclusive. Therefore, if an hour had freezing rain, the indicator variables will have ``1" for \texttt{Freezing Rain}, and a ``0" for \texttt{Rain}.
+
+\pagebreak
+
+Loading in crash data:
 
 \begin{Schunk}
 \begin{Sinput}
