@@ -27,7 +27,7 @@
 \begin{center}
 \Large{\textsc{Data Cleaning}}
 \par
-\normalsize{\textsc{for}}
+\normalsize{\textsc{for the}}
 \par
 \large{\textsc{Kelowna Weather-Crash Project}}
 \end{center}
@@ -35,15 +35,21 @@
 
 \vspace{0.917 pc} %Creates a paragraph line break. 
 
-\section*{Section 1}
+\tableofcontents
 
 
-remove all 'flag' variables
+\pagebreak
+\section{Introduction}
+
+
 
 group weather data based on time groups in crash dataset, then join weather data on crash table (1 case = 1 crash, what was the weather like when this crash occurred?)
 
-is 'weather' reliable? may need to correct it if there is precipitation but NA for 'weather'
 
+
+
+\pagebreak
+\section{Weather Data}
 Loading in weather data:
 
 <<chunk1, echo=TRUE>>=
@@ -208,9 +214,50 @@ snowprob
 
 In other words, whenever the temperature is above 0, it is usually raining (0.92\%). Similarly, whenever the temperature is below 0, it is basically always snowing (0.998\%).
 \par
-Therefore, we could assign our missing values based on these probabilities. However, it is intuitively true that as you get further from zero, these probabilities would change. Therefore, we can just use a general linear model to predict whether or not it will be snowing or raining based on the temperature:
+Therefore, we could assign our missing values based on these probabilities. However, it is intuitively true that as you get further from zero, these probabilities would change. Therefore, we can just use a random forest model to predict whether or not it will be snowing or raining based on the temperature:
 
-<<chunk4glm, echo=TRUE, fig=TRUE>>=
+<<chunk4RF, echo=TRUE, fig=TRUE>>=
+training = subset(fullWeather[-precip,], 
+                  subset = (is.na(fullWeather$actual[-precip]) == FALSE), 
+                  select=c('Temp...C.', 'actual'))
+training$actual = as.factor(training$actual)
+library(randomForest)
+RFmodel = randomForest(actual~Temp...C., data=training, importance=TRUE)
+RFmodel
+plot(training, col='red', main="Rain/Snow RF", yaxt='n', ylab="")
+test = min(training$Temp...C.):max(training$Temp...C.)
+lines(test, predict(RFmodel, 
+                    data.frame(Temp...C. = test), type = "response"), lwd=2)
+axis(side = 2, at = c(1,2), labels = c('Rain', 'Snow'), cex.axis=1.2, las=1)
+
+#predicting missing (precip) values
+rainsnowpredict = predict(RFmodel, 
+                  fullWeather[precip,], type = "response")
+#old Rain and Snow variables
+summary(fullWeather$Rain)
+summary(fullWeather$Snow)
+#adding predictions
+#where 0 = raining and 1 = snowing
+for (i in names(rainsnowpredict)){
+  if (rainsnowpredict[i] == 'Rain'){
+    fullWeather[as.numeric(i), 'Rain'] = 1
+    fullWeather[as.numeric(i), 'Weather'] = 'Rain'
+  } else {
+    fullWeather[as.numeric(i), 'Snow'] = 1
+    fullWeather[as.numeric(i), 'Weather'] = 'Snow'
+  }
+}
+#new Rain and Snow variables
+summary(fullWeather$Rain)
+summary(fullWeather$Snow)
+#checking that it worked
+length(which(fullWeather$Precip..Amount..mm. > 0 &
+                    is.na(fullWeather$Precip..Amount..mm.) == FALSE &
+                    is.na(fullWeather$Weather)))
+@
+
+
+<<chunk4glm, echo=FALSE, fig=TRUE, eval=FALSE>>=
 training = subset(fullWeather[-precip,], 
                   subset = (is.na(fullWeather$actual[-precip]) == FALSE), 
                   select=c('Temp...C.', 'actual'))
@@ -262,6 +309,7 @@ axis(side = 2, at = c(1,2), labels = c('Missing Rain', 'Missing Snow'), cex.axis
 
 
 \pagebreak
+\section{Crash Data}
 
 Loading in crash data:
 
@@ -272,6 +320,25 @@ fullCrash = subset(read.csv('../../crashdata/Southern Interior_Full Data_data.cs
 summary(fullCrash)
 @
 
+Now, while the crash data is overall much cleaner out-of-the-box than the weather data, the issue is that this crash dataset was made to be 4-anonymous, as the day of the month is not given. Instead, all we have is the month, year, and day of the week. This means we cannot perfectly know the weather on any given day. \par
+A solution to this problem would be to randomly assign each of the 4 (or 5) possible weather conditions in each month to each of the corresponding possible days. A better alternative would be to average the weather conditions on each of the possible 4 days and then assign this same (averaged) weather condition to all 4 (or 5) days in that month. The precipitation type (rain, snow, fog, etc.) would then also be averaged (2 snows + 1 rain = snow) with a priority rating (1 snow + 1 rain = snow). 
+\par
+In order to do this, we will need to create a new column on which to join the two datasets. For the crash data, this is easy. 
+
+<<chunknewcol, echo=TRUE>>=
+fullCrash$linker = paste(fullCrash$Date.Of.Loss.Year,
+                         fullCrash$Month.Of.Year, 
+                         fullCrash$Day.Of.Week,
+                         fullCrash$Time.Category)
+head(fullCrash$linker)
+@
+
+
+For the weather data, we first collapse the hourly data to the same time periods as the crash data (00:00-02:59, 03:00-05:59, 06:00-08:59, 09:00-11:59, 12:00-14:59, 15:00-17:59, 18:00-20:59, 21:00-23:59):
+
+<<chunkweathercollapse, echo=TRUE>>=
+
+@
 
 
 

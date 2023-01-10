@@ -1,3 +1,5 @@
+CHANGE glm in datacleaning to RF, maybe add relative hum. as a variable
+
 - merge weather and crash data into one .rda file
 
 - make folders:
