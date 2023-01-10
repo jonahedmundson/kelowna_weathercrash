@@ -16,7 +16,7 @@
 
 \pagestyle{fancy}
 \fancyhf{}
-\rhead{Jonah Edmundson \\ Dec 2022}
+\rhead{Jonah Edmundson \\ Jan 2023}
 \lhead{\thepage}
 
 \newcommand{\comment}[1]{}
@@ -74,6 +74,9 @@ Loading in weather data:
 [1] 43824
 \end{Soutput}
 \begin{Sinput}
+> #assigning a Julian day variable
+> library(lubridate)
+> fullWeather$julianday = yday(as.Date(fullWeather$Date.Time..LST., tz='LST'))
 > summary(fullWeather)
 \end{Sinput}
 \begin{Soutput}
@@ -109,14 +112,14 @@ Loading in weather data:
  3rd Qu.:0.00000     3rd Qu.:33.00      3rd Qu.:11.000   3rd Qu.:16.1   
  Max.   :7.10000     Max.   :36.00      Max.   :58.000   Max.   :16.1   
  NA's   :24          NA's   :13955      NA's   :52       NA's   :31     
- Stn.Press..kPa.   Wind.Chill         Weather     
- Min.   :93.73   Min.   :-34.00   Rain    : 2069  
- 1st Qu.:96.10   1st Qu.:-11.00   Snow    : 1662  
- Median :96.52   Median : -6.00   Haze    : 1187  
- Mean   :96.55   Mean   : -8.22   Fog     :  873  
- 3rd Qu.:96.96   3rd Qu.: -4.00   Rain,Fog:  233  
- Max.   :99.34   Max.   : -1.00   (Other) :  246  
- NA's   :34      NA's   :36294    NA's    :37554  
+ Stn.Press..kPa.   Wind.Chill         Weather        julianday    
+ Min.   :93.73   Min.   :-34.00   Rain    : 2069   Min.   :  1.0  
+ 1st Qu.:96.10   1st Qu.:-11.00   Snow    : 1662   1st Qu.: 92.0  
+ Median :96.52   Median : -6.00   Haze    : 1187   Median :183.0  
+ Mean   :96.55   Mean   : -8.22   Fog     :  873   Mean   :183.1  
+ 3rd Qu.:96.96   3rd Qu.: -4.00   Rain,Fog:  233   3rd Qu.:274.0  
+ Max.   :99.34   Max.   : -1.00   (Other) :  246   Max.   :366.0  
+ NA's   :34      NA's   :36294    NA's    :37554                  
 \end{Soutput}
 \end{Schunk}
 
@@ -163,49 +166,6 @@ Need to relevel factor to remove empty string option:
 \end{Soutput}
 \end{Schunk}
 
-
-\pagebreak
-
-Testing if any hours have precipitation without the appropriate \texttt{Weather} variable:
-
-\begin{Schunk}
-\begin{Sinput}
-> precip = fullWeather[fullWeather$Precip..Amount..mm. > 0 &
-+                       is.na(fullWeather$Precip..Amount..mm.) == FALSE, 
-+                      c("Precip..Amount..mm.", "Weather")]
-> summary(precip)
-\end{Sinput}
-\begin{Soutput}
- Precip..Amount..mm.              Weather   
- Min.   :0.2000      Rain             :936  
- 1st Qu.:0.2000      Snow             :472  
- Median :0.5000      Rain,Fog         :159  
- Mean   :0.6199      Moderate Rain    : 61  
- 3rd Qu.:0.8000      Moderate Rain,Fog: 51  
- Max.   :7.1000      (Other)          : 84  
-                     NA's             :356  
-\end{Soutput}
-\begin{Sinput}
-> levels(fullWeather$Weather)
-\end{Sinput}
-\begin{Soutput}
- [1] "Fog"                             "Freezing Fog"                   
- [3] "Freezing Rain,Snow"              "Haze"                           
- [5] "Rain"                            "Rain,Fog"                       
- [7] "Snow"                            "Moderate Snow"                  
- [9] "Rain,Snow"                       "Moderate Rain"                  
-[11] "Moderate Rain,Fog"               "Thunderstorms"                  
-[13] "Thunderstorms,Heavy Rain"        "Thunderstorms,Heavy Rain,Fog"   
-[15] "Thunderstorms,Rain"              "Thunderstorms,Rain,Fog"         
-[17] "Heavy Snow"                      "Thunderstorms,Moderate Rain"    
-[19] "Freezing Rain,Fog"               "Heavy Rain"                     
-[21] "Freezing Rain"                   "Snow,Blowing Snow"              
-[23] "Thunderstorms,Moderate Rain,Fog" "Heavy Rain,Fog"                 
-\end{Soutput}
-\end{Schunk}
-
-FINISH THIS***********
-
 \pagebreak
 
 Changing \texttt{Weather} factor variable to many indicator variables. 
@@ -239,11 +199,11 @@ Changing \texttt{Weather} factor variable to many indicator variables.
 [10] "Temp...C."           "Dew.Point.Temp...C." "Rel.Hum...."        
 [13] "Precip..Amount..mm." "Wind.Dir..10s.deg."  "Wind.Spd..km.h."    
 [16] "Visibility..km."     "Stn.Press..kPa."     "Wind.Chill"         
-[19] "Weather"             "Fog"                 "Freezing Fog"       
-[22] "Freezing Rain"       "Snow"                "Haze"               
-[25] "Rain"                "Moderate Snow"       "Moderate Rain"      
-[28] "Thunderstorms"       "Heavy Rain"          "Heavy Snow"         
-[31] "Blowing Snow"       
+[19] "Weather"             "julianday"           "Fog"                
+[22] "Freezing Fog"        "Freezing Rain"       "Snow"               
+[25] "Haze"                "Rain"                "Moderate Snow"      
+[28] "Moderate Rain"       "Thunderstorms"       "Heavy Rain"         
+[31] "Heavy Snow"          "Blowing Snow"       
 \end{Soutput}
 \begin{Sinput}
 > ############
@@ -289,6 +249,141 @@ Changing \texttt{Weather} factor variable to many indicator variables.
 I realize that I could have used a regex solution here to shorten the code, but the solution above is more general. This is important if I wanted to add/remove groups to/from the reduced list of weather types later on (ie. adding `Heavy Snow').
 \par
 *Note that I kept \texttt{Rain} and \texttt{Freezing Rain} separate and mutually exclusive. Therefore, if an hour had freezing rain, the indicator variables will have ``1" for \texttt{Freezing Rain}, and a ``0" for \texttt{Rain}.
+
+
+\pagebreak
+
+Testing if any hours have precipitation without the appropriate \texttt{Weather} variable:
+
+\begin{Schunk}
+\begin{Sinput}
+> precip = which(fullWeather$Precip..Amount..mm. > 0 &
++                     is.na(fullWeather$Precip..Amount..mm.) == FALSE &
++                     is.na(fullWeather$Weather)
++ ) #gives rows that have precip but NA for weather
+> length(precip)
+\end{Sinput}
+\begin{Soutput}
+[1] 356
+\end{Soutput}
+\end{Schunk}
+
+There are 356 cases where there is precipitation but no associated \texttt{Weather} variable!
+\par
+To fix this, we want to assign the appropriate \texttt{Weather} depending on the temperature. However, this is easier said than done. At what temperature does it snow versus rain?
+\par
+We can ask the data:
+
+\begin{Schunk}
+\begin{Sinput}
+> fullWeather$actual = NA
+> for (i in 1:nrow(fullWeather)){
++   if (fullWeather$Rain[i] == 1){
++     fullWeather$actual[i] = 'Rain'
++   }
++   if (fullWeather$Snow[i] == 1){
++     fullWeather$actual[i] = 'Snow'
++   }
++ }
+> assign = function(x){
++   if (is.na(x)){
++     return(NA)
++   }
++   if (x > 0){
++     return("Above 0")
++   } else {
++     return("Below 0")
++   }
++ }
+> #classification table
+> fullWeather$expected = sapply(fullWeather$Temp...C., assign)
+> rainsnow = table(fullWeather$expected, fullWeather$actual)
+> rainsnow
+\end{Sinput}
+\begin{Soutput}
+          Rain Snow
+  Above 0 2438  202
+  Below 0    3 1490
+\end{Soutput}
+\begin{Sinput}
+> #probabilities
+> #chance of raining if above 0
+> rainprob = rainsnow[1,1]/(rainsnow[1,1]+rainsnow[1,2])
+> rainprob
+\end{Sinput}
+\begin{Soutput}
+[1] 0.9234848
+\end{Soutput}
+\begin{Sinput}
+> #chance of snowing if below 0
+> snowprob = rainsnow[2,2]/(rainsnow[2,2]+rainsnow[2,1])
+> snowprob
+\end{Sinput}
+\begin{Soutput}
+[1] 0.9979906
+\end{Soutput}
+\end{Schunk}
+
+In other words, whenever the temperature is above 0, it is usually raining (0.92\%). Similarly, whenever the temperature is below 0, it is basically always snowing (0.998\%).
+\par
+Therefore, we could assign our missing values based on these probabilities. However, it is intuitively true that as you get further from zero, these probabilities would change. Therefore, we can just use a general linear model to predict whether or not it will be snowing or raining based on the temperature:
+
+\begin{Schunk}
+\begin{Sinput}
+> training = subset(fullWeather[-precip,], 
++                   subset = (is.na(fullWeather$actual[-precip]) == FALSE), 
++                   select=c('Temp...C.', 'actual'))
+> training$actual = as.factor(training$actual)
+> rainsnow.glm = glm(actual~Temp...C., data = training, 
++                    family = binomial)
+> #summary(rainsnow.glm)
+> plot(training, col='red', main="Rain/Snow GLM")
+> test = min(training$Temp...C.):max(training$Temp...C.)
+> lines(test, predict(rainsnow.glm, 
++                     data.frame(Temp...C. = test), type = "response")+1, lwd=2)
+> #predicting missing (precip) values
+> rainsnowpredict = round(predict(rainsnow.glm, 
++                   fullWeather[precip,], type = "response"))
+> #where 0 = raining and 1 = snowing
+> for (i in names(rainsnowpredict)){
++   if (rainsnowpredict[i] == 0){
++     fullWeather[as.numeric(i), 'Rain'] = 1
++     fullWeather[as.numeric(i), 'Weather'] = 'Rain'
++   } else {
++     fullWeather[as.numeric(i), 'Snow'] = 1
++     fullWeather[as.numeric(i), 'Weather'] = 'Snow'
++   }
++ }
+> #new Rain and Snow variables
+> summary(fullWeather$Rain)
+\end{Sinput}
+\begin{Soutput}
+    0     1 
+41065  2759 
+\end{Soutput}
+\begin{Sinput}
+> summary(fullWeather$Snow)
+\end{Sinput}
+\begin{Soutput}
+    0     1 
+42081  1743 
+\end{Soutput}
+\begin{Sinput}
+> #checking that it worked
+> length(which(fullWeather$Precip..Amount..mm. > 0 &
++                     is.na(fullWeather$Precip..Amount..mm.) == FALSE &
++                     is.na(fullWeather$Weather)))
+\end{Sinput}
+\begin{Soutput}
+[1] 0
+\end{Soutput}
+\end{Schunk}
+\includegraphics{datacleaning-chunk4glm}
+
+
+
+
+
 
 \pagebreak
 

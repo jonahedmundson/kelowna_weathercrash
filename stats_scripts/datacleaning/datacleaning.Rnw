@@ -16,7 +16,7 @@
 
 \pagestyle{fancy}
 \fancyhf{}
-\rhead{Jonah Edmundson \\ Dec 2022}
+\rhead{Jonah Edmundson \\ Jan 2023}
 \lhead{\thepage}
 
 \newcommand{\comment}[1]{}
@@ -64,6 +64,10 @@ for (i in c(2017:2021)){
 nrow(fullWeather)
 24*365*5 + 24 #2020 was a leap year
 
+#assigning a Julian day variable
+library(lubridate)
+fullWeather$julianday = yday(as.Date(fullWeather$Date.Time..LST., tz='LST'))
+
 summary(fullWeather)
 @
 
@@ -91,22 +95,6 @@ Need to relevel factor to remove empty string option:
 fullWeather$Weather = droplevels(fullWeather$Weather)
 "" %in% levels(fullWeather$Weather)
 @
-
-
-\pagebreak
-
-Testing if any hours have precipitation without the appropriate \texttt{Weather} variable:
-
-<<chunk4, echo=TRUE>>=
-precip = fullWeather[fullWeather$Precip..Amount..mm. > 0 &
-                      is.na(fullWeather$Precip..Amount..mm.) == FALSE, 
-                     c("Precip..Amount..mm.", "Weather")]
-summary(precip)
-
-levels(fullWeather$Weather)
-@
-
-FINISH THIS***********
 
 \pagebreak
 
@@ -163,6 +151,115 @@ summary(fullWeather[,c("Weather", "Rain", "Fog", "Snow",
 I realize that I could have used a regex solution here to shorten the code, but the solution above is more general. This is important if I wanted to add/remove groups to/from the reduced list of weather types later on (ie. adding `Heavy Snow').
 \par
 *Note that I kept \texttt{Rain} and \texttt{Freezing Rain} separate and mutually exclusive. Therefore, if an hour had freezing rain, the indicator variables will have ``1" for \texttt{Freezing Rain}, and a ``0" for \texttt{Rain}.
+
+
+\pagebreak
+
+Testing if any hours have precipitation without the appropriate \texttt{Weather} variable:
+
+<<chunk4a, echo=TRUE>>=
+precip = which(fullWeather$Precip..Amount..mm. > 0 &
+                    is.na(fullWeather$Precip..Amount..mm.) == FALSE &
+                    is.na(fullWeather$Weather)
+) #gives rows that have precip but NA for weather
+length(precip)
+@
+
+There are 356 cases where there is precipitation but no associated \texttt{Weather} variable!
+\par
+To fix this, we want to assign the appropriate \texttt{Weather} depending on the temperature. However, this is easier said than done. At what temperature does it snow versus rain?
+\par
+We can ask the data:
+
+<<chunk4, echo=TRUE>>=
+fullWeather$actual = NA
+for (i in 1:nrow(fullWeather)){
+  if (fullWeather$Rain[i] == 1){
+    fullWeather$actual[i] = 'Rain'
+  }
+  if (fullWeather$Snow[i] == 1){
+    fullWeather$actual[i] = 'Snow'
+  }
+}
+
+assign = function(x){
+  if (is.na(x)){
+    return(NA)
+  }
+  if (x > 0){
+    return("Above 0")
+  } else {
+    return("Below 0")
+  }
+}
+#classification table
+fullWeather$expected = sapply(fullWeather$Temp...C., assign)
+rainsnow = table(fullWeather$expected, fullWeather$actual)
+rainsnow
+
+#probabilities
+#chance of raining if above 0
+rainprob = rainsnow[1,1]/(rainsnow[1,1]+rainsnow[1,2])
+rainprob
+#chance of snowing if below 0
+snowprob = rainsnow[2,2]/(rainsnow[2,2]+rainsnow[2,1])
+snowprob
+@
+
+In other words, whenever the temperature is above 0, it is usually raining (0.92\%). Similarly, whenever the temperature is below 0, it is basically always snowing (0.998\%).
+\par
+Therefore, we could assign our missing values based on these probabilities. However, it is intuitively true that as you get further from zero, these probabilities would change. Therefore, we can just use a general linear model to predict whether or not it will be snowing or raining based on the temperature:
+
+<<chunk4glm, echo=TRUE, fig=TRUE>>=
+training = subset(fullWeather[-precip,], 
+                  subset = (is.na(fullWeather$actual[-precip]) == FALSE), 
+                  select=c('Temp...C.', 'actual'))
+training$actual = as.factor(training$actual)
+rainsnow.glm = glm(actual~Temp...C., data = training, 
+                   family = binomial)
+#summary(rainsnow.glm)
+plot(training, col='red', main="Rain/Snow GLM")
+test = min(training$Temp...C.):max(training$Temp...C.)
+lines(test, predict(rainsnow.glm, 
+                    data.frame(Temp...C. = test), type = "response")+1, lwd=2)
+
+#predicting missing (precip) values
+rainsnowpredict = round(predict(rainsnow.glm, 
+                  fullWeather[precip,], type = "response"))
+#where 0 = raining and 1 = snowing
+for (i in names(rainsnowpredict)){
+  if (rainsnowpredict[i] == 0){
+    fullWeather[as.numeric(i), 'Rain'] = 1
+    fullWeather[as.numeric(i), 'Weather'] = 'Rain'
+  } else {
+    fullWeather[as.numeric(i), 'Snow'] = 1
+    fullWeather[as.numeric(i), 'Weather'] = 'Snow'
+  }
+}
+#new Rain and Snow variables
+summary(fullWeather$Rain)
+summary(fullWeather$Snow)
+#checking that it worked
+length(which(fullWeather$Precip..Amount..mm. > 0 &
+                    is.na(fullWeather$Precip..Amount..mm.) == FALSE &
+                    is.na(fullWeather$Weather)))
+@
+
+
+
+<<chunkwaste, eval=FALSE, fig=TRUE, echo=FALSE>>=
+#temporal distribution of missing weather data
+#table
+table(month(as.Date(subset(fullWeather[precip,], subset = fullWeather$expected[precip] == 'Above 0' & (is.na(fullWeather$expected[precip]) == FALSE), select='Date.Time..LST.')$Date.Time..LST., tz='LST')))
+table(month(as.Date(subset(fullWeather[precip,], subset = fullWeather$expected[precip] == 'Below 0' & (is.na(fullWeather$expected[precip]) == FALSE), select='Date.Time..LST.')$Date.Time..LST., tz='LST')))
+#plot
+plot(fullWeather$julianday[precip], as.factor(fullWeather$expected[precip]), 
+     yaxt= 'n', ylim=c(0.5, 2.5), xlab='Julian Day', 
+     ylab='Expected Weather (that is missing)', main='Temporal Distr. of Missing Weather Data')
+axis(side = 2, at = c(1,2), labels = c('Missing Rain', 'Missing Snow'), cex.axis=0.8)
+@
+
+
 
 \pagebreak
 
