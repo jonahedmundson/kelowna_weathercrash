@@ -1,5 +1,3 @@
-CHANGE glm in datacleaning to RF, maybe add relative hum. as a variable
-
 - merge weather and crash data into one .rda file
 
 - make folders:
@@ -13,4 +11,6 @@ upon completion, make a tableau dashboard with key graphics from reports to stan
 
 upon completion, write an article about it on medium (towards data science)
 
-use MLE w bootstrapping (581) to evaluate all model fits 
+use MLE w bootstrapping (581) to evaluate all model fits  --> or MSE from 571?
+
+nice visualizations --> https://www.tylermw.com/3d-ggplots-with-rayshader/

@@ -43,7 +43,7 @@
 
 
 
-group weather data based on time groups in crash dataset, then join weather data on crash table (1 case = 1 crash, what was the weather like when this crash occurred?)
+Here I present the data cleaning for each dataset, as well as the process of combining the datasets. 
 
 
 
@@ -320,7 +320,8 @@ fullCrash = subset(read.csv('../../crashdata/Southern Interior_Full Data_data.cs
 summary(fullCrash)
 @
 
-Now, while the crash data is overall much cleaner out-of-the-box than the weather data, the issue is that this crash dataset was made to be 4-anonymous, as the day of the month is not given. Instead, all we have is the month, year, and day of the week. This means we cannot perfectly know the weather on any given day. \par
+Now, while the crash data is overall much cleaner out-of-the-box than the weather data, the issue is that this crash dataset was made to be 4-anonymous, as the day of the month is not given. Instead, all we have is the month, year, and day of the week. This means we cannot perfectly know the weather on any given day. This massively reduces the power of any statistical tests that we perform with the data, but without being able to reidentify any of the observations, this is the best that we can do. 
+\par
 A solution to this problem would be to randomly assign each of the 4 (or 5) possible weather conditions in each month to each of the corresponding possible days. A better alternative would be to average the weather conditions on each of the possible 4 days and then assign this same (averaged) weather condition to all 4 (or 5) days in that month. The precipitation type (rain, snow, fog, etc.) would then also be averaged (2 snows + 1 rain = snow) with a priority rating (1 snow + 1 rain = snow). 
 \par
 In order to do this, we will need to create a new column on which to join the two datasets. For the crash data, this is easy. 
@@ -337,9 +338,76 @@ head(fullCrash$linker)
 For the weather data, we first collapse the hourly data to the same time periods as the crash data (00:00-02:59, 03:00-05:59, 06:00-08:59, 09:00-11:59, 12:00-14:59, 15:00-17:59, 18:00-20:59, 21:00-23:59):
 
 <<chunkweathercollapse, echo=TRUE>>=
+weatherTime = function(x){ 
+  #assigns the correct time category
+  if (x %in% c('00:00', '01:00', '02:00')){
+    return('00:00-02:59')
+  }
+  if (x %in% c('03:00', '04:00', '05:00')){
+    return('03:00-05:59')
+  }
+  if (x %in% c('06:00', '07:00', '08:00')){
+    return('06:00-08:59')
+  }
+  if (x %in% c('09:00', '10:00', '11:00')){
+    return('09:00-11:59')
+  }
+  if (x %in% c('12:00', '13:00', '14:00')){
+    return('12:00-14:59')
+  }
+  if (x %in% c('15:00', '16:00', '17:00')){
+    return('15:00-17:59')
+  }
+  if (x %in% c('18:00', '19:00', '20:00')){
+    return('18:00-20:59')
+  }
+  if (x %in% c('21:00', '22:00', '23:00')){
+    return('21:00-23:59')
+  }
+}
+
+fullWeather$timeCategory = sapply(fullWeather$Time..LST., weatherTime)
+
+#we now can average the weather over these time periods
+timereducedWeather = c()
+j = 1
+for (i in seq(1, nrow(fullWeather), 3)){
+  #creating a whole new dataframe
+  timereducedWeather$linker[j] = fullWeather$linker[i]
+  timereducedWeather$Temp...C. = (fullWeather$Temp...C.[i] +
+    fullWeather$Temp...C.[i+1] + fullWeather$Temp...C.[i+2])/3
+  #...
+  j = j+1
+}
+timereducedWeather = as.data.frame(timereducedWeather)
+@
+
+************FINISH THIS
+
+Next, we need to get the day of the week. Then we can create the linker for the weather data:
+
+<<chunkweatherdayoftheweek, echo=TRUE>>=
+#weekday, in uppercase
+fullWeather$weekday = toupper(as.character(wday(as.Date(fullWeather$Date.Time..LST., tz='LST'), label=TRUE, abbr=FALSE)))
+
+#month
+fullWeather$monthName = toupper(as.character(month(as.Date(fullWeather$Date.Time..LST., tz='LST'), label=TRUE, abbr=FALSE)))
+
+#creating weather linker column
+fullWeather$linker = paste(fullWeather$Year,
+                         fullWeather$monthName,
+                         fullWeather$weekday,
+                         fullWeather$timeCategory)
+@
+
+Now, it is important to re-focus on what we want to do. We want to know the weather that was occurring during each crash (ie. for each row in the crash dataset). The only thing preventing us from doing this is that for each unique linker in the crash data, there are 4 (or 5) equivalent linkers in the weather dataset. In order to remove this ambiguity, we need to average the weather over the weather rows that have identical linkers. 
+
+<<weatheraverage, echo=TRUE>>=
+#getting indices of duplicates
 
 @
 
+************FINISH THIS
 
 
 <<finalchunk, echo=TRUE>>=
