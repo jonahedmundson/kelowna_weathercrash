@@ -48,8 +48,8 @@ load_first_object <- function(fname){
   return(e[[ls(e)[1]]])
 }
 
-#weatherdata = load_first_object("X.rda")
-
+weatherdata = load_first_object("../../rda_files/all_data.rda")
+summary(weatherdata)
 @
 
 

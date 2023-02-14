@@ -5,7 +5,6 @@
 \usepackage{graphicx} %Only need to call this if inserting images.
 \usepackage{caption} %Only need to call this if inserting captions.
 \usepackage{float} %Allows the use of the [H] specifier. 
-\graphicspath{{C:/Users/jonah/Pictures/meme/}} %Sets the working directory for images.
 \usepackage[colorlinks,citecolor=blue,linkcolor=blue,urlcolor=blue]{hyperref} %Allows for the embedding of urls. 
 \usepackage{setspace}
 \usepackage{blindtext}
@@ -152,6 +151,13 @@ fullWeather = subset(fullWeather, select = - c(`Moderate Rain`,
 
 summary(fullWeather[,c("Weather", "Rain", "Fog", "Snow", 
                        "Thunderstorms", "Freezing Rain")])
+
+#converting indicator columns to numeric
+fullWeather$Fog = as.numeric(as.character(fullWeather$Fog))
+fullWeather$'Freezing Rain' = as.numeric(as.character(fullWeather$'Freezing Rain'))
+fullWeather$Snow = as.numeric(as.character(fullWeather$Snow))
+fullWeather$Rain = as.numeric(as.character(fullWeather$Rain))
+fullWeather$Thunderstorms = as.numeric(as.character(fullWeather$Thunderstorms))
 @
 
 I realize that I could have used a regex solution here to shorten the code, but the solution above is more general. This is important if I wanted to add/remove groups to/from the reduced list of weather types later on (ie. adding `Heavy Snow').
@@ -212,7 +218,7 @@ snowprob = rainsnow[2,2]/(rainsnow[2,2]+rainsnow[2,1])
 snowprob
 @
 
-In other words, whenever the temperature is above 0, it is usually raining (0.92\%). Similarly, whenever the temperature is below 0, it is basically always snowing (0.998\%).
+In other words, whenever the temperature is above 0, it is usually raining (92\%). Similarly, whenever the temperature is below 0, it is basically always snowing (99.8\%).
 \par
 Therefore, we could assign our missing values based on these probabilities. However, it is intuitively true that as you get further from zero, these probabilities would change. Therefore, we can just use a random forest model to predict whether or not it will be snowing or raining based on the temperature:
 
@@ -234,8 +240,8 @@ axis(side = 2, at = c(1,2), labels = c('Rain', 'Snow'), cex.axis=1.2, las=1)
 rainsnowpredict = predict(RFmodel, 
                   fullWeather[precip,], type = "response")
 #old Rain and Snow variables
-summary(fullWeather$Rain)
-summary(fullWeather$Snow)
+summary(as.factor(fullWeather$Rain))
+summary(as.factor(fullWeather$Snow))
 #adding predictions
 #where 0 = raining and 1 = snowing
 for (i in names(rainsnowpredict)){
@@ -248,8 +254,8 @@ for (i in names(rainsnowpredict)){
   }
 }
 #new Rain and Snow variables
-summary(fullWeather$Rain)
-summary(fullWeather$Snow)
+summary(as.factor(fullWeather$Rain))
+summary(as.factor(fullWeather$Snow))
 #checking that it worked
 length(which(fullWeather$Precip..Amount..mm. > 0 &
                     is.na(fullWeather$Precip..Amount..mm.) == FALSE &
@@ -284,8 +290,8 @@ for (i in names(rainsnowpredict)){
   }
 }
 #new Rain and Snow variables
-summary(fullWeather$Rain)
-summary(fullWeather$Snow)
+summary(as.factor(fullWeather$Rain))
+summary(as.factor(fullWeather$Snow))
 #checking that it worked
 length(which(fullWeather$Precip..Amount..mm. > 0 &
                     is.na(fullWeather$Precip..Amount..mm.) == FALSE &
@@ -367,22 +373,8 @@ weatherTime = function(x){
 }
 
 fullWeather$timeCategory = sapply(fullWeather$Time..LST., weatherTime)
-
-#we now can average the weather over these time periods
-timereducedWeather = c()
-j = 1
-for (i in seq(1, nrow(fullWeather), 3)){
-  #creating a whole new dataframe
-  timereducedWeather$linker[j] = fullWeather$linker[i]
-  timereducedWeather$Temp...C. = (fullWeather$Temp...C.[i] +
-    fullWeather$Temp...C.[i+1] + fullWeather$Temp...C.[i+2])/3
-  #...
-  j = j+1
-}
-timereducedWeather = as.data.frame(timereducedWeather)
 @
 
-************FINISH THIS
 
 Next, we need to get the day of the week. Then we can create the linker for the weather data:
 
@@ -398,20 +390,84 @@ fullWeather$linker = paste(fullWeather$Year,
                          fullWeather$monthName,
                          fullWeather$weekday,
                          fullWeather$timeCategory)
+head(fullWeather$linker)
+
+#we now can average the weather over these time periods
+timereducedWeather = c()
+j = 1
+for (i in seq(1, nrow(fullWeather), 3)){
+  #creating a whole new dataframe
+  timereducedWeather$linker[j] = fullWeather$linker[i]
+  #avg of temp
+  timereducedWeather$Temp...C.[j] = mean(c(fullWeather$Temp...C.[i],
+    fullWeather$Temp...C.[i+1], fullWeather$Temp...C.[i+2]), na.rm = TRUE)
+  #avg of dew point temp
+  timereducedWeather$Dew.Point.Temp...C.[j] = mean(c(fullWeather$Dew.Point.Temp...C.[i],
+    fullWeather$Dew.Point.Temp...C.[i+1], fullWeather$Dew.Point.Temp...C.[i+2]), na.rm = TRUE)
+  #avg of relative humidity
+  timereducedWeather$Rel.Hum....[j] = mean(c(fullWeather$Rel.Hum....[i],
+    fullWeather$Rel.Hum....[i+1], fullWeather$Rel.Hum....[i+2]), na.rm = TRUE)
+  #avg of precipitation amount
+  timereducedWeather$Precip..Amount..mm.[j] = mean(c(fullWeather$Precip..Amount..mm.[i],
+    fullWeather$Precip..Amount..mm.[i+1], fullWeather$Precip..Amount..mm.[i+2]), na.rm = TRUE)
+  #avg of wind direction
+  timereducedWeather$Wind.Dir..10s.deg.[j] = mean(c(fullWeather$Wind.Dir..10s.deg.[i],
+    fullWeather$Wind.Dir..10s.deg.[i+1], fullWeather$Wind.Dir..10s.deg.[i+2]), na.rm = TRUE)
+  #avg of wind speed
+  timereducedWeather$Wind.Spd..km.h.[j] = mean(c(fullWeather$Wind.Spd..km.h.[i], 
+    fullWeather$Wind.Spd..km.h.[i+1],  fullWeather$Wind.Spd..km.h.[i+2]), na.rm = TRUE)
+  #avg of visibility
+  timereducedWeather$Visibility..km.[j] = mean(c(fullWeather$Visibility..km.[i],
+    fullWeather$Visibility..km.[i+1], fullWeather$Visibility..km.[i+2]), na.rm = TRUE)
+  #avg of stn pressure
+  timereducedWeather$Stn.Press..kPa.[j] = mean(c(fullWeather$Stn.Press..kPa.[i],
+    fullWeather$Stn.Press..kPa.[i+1], fullWeather$Stn.Press..kPa.[i+2]), na.rm = TRUE)
+  #avg of wind chill
+  timereducedWeather$Wind.Chill[j] = mean(c(fullWeather$Wind.Chill[i],
+    fullWeather$Wind.Chill[i+1], fullWeather$Wind.Chill[i+2]), na.rm = TRUE)
+  #indicator variables
+  timereducedWeather$Fog[j] = max(c(fullWeather$Fog[i], fullWeather$Fog[i+1], 
+                            fullWeather$Fog[i+2]))
+  timereducedWeather$'Freezing Rain'[j] = max(c(fullWeather$'Freezing Rain'[i], 
+        fullWeather$'Freezing Rain'[i+1], fullWeather$'Freezing Rain'[i+2]))
+  timereducedWeather$Snow[j] = max(c(fullWeather$Snow[i], fullWeather$Snow[i+1], 
+                            fullWeather$Snow[i+2]))
+  timereducedWeather$Rain[j] = max(c(fullWeather$Rain[i], fullWeather$Rain[i+1], 
+                            fullWeather$Rain[i+2]))
+  timereducedWeather$Thunderstorms[j] = max(c(fullWeather$Thunderstorms[i], 
+        fullWeather$Thunderstorms[i+1], fullWeather$Thunderstorms[i+2]))
+  #incrementing ticker
+  j = j+1
+}
+timereducedWeather = as.data.frame(timereducedWeather)
+head(timereducedWeather)
 @
 
 Now, it is important to re-focus on what we want to do. We want to know the weather that was occurring during each crash (ie. for each row in the crash dataset). The only thing preventing us from doing this is that for each unique linker in the crash data, there are 4 (or 5) equivalent linkers in the weather dataset. In order to remove this ambiguity, we need to average the weather over the weather rows that have identical linkers. 
 
 <<weatheraverage, echo=TRUE>>=
-#getting indices of duplicates
+#proof of principle (shows number of times each unique linker occurs)
+table(table(timereducedWeather$linker)) 
 
+#getting indices of duplicates
+idx = duplicated(timereducedWeather$linker)
+finalWeather = timereducedWeather[!idx,]
 @
 
-************FINISH THIS
+Now, the final step. We need to join the crash and weather datasets.
 
+<<secondlast, echo=TRUE>>=
+alldata = merge(x=fullCrash,y=finalWeather,by="linker",all.x=TRUE, sort=FALSE)
+head(alldata)
+@
+
+
+
+
+Saving the cleaned dataset:
 
 <<finalchunk, echo=TRUE>>=
-#save(alldata, file = "../rda_files/all_data.rda")
+save(alldata, file = "../../rda_files/all_data.rda")
 @
 
 
