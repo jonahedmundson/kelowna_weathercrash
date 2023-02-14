@@ -16,7 +16,7 @@
 
 \pagestyle{fancy}
 \fancyhf{}
-\rhead{Jonah Edmundson \\ Dec 2022}
+\rhead{Jonah Edmundson \\ 2023}
 \lhead{\thepage}
 
 \newcommand{\comment}[1]{}
@@ -36,13 +36,18 @@
 
 \vspace{0.917 pc} %Creates a paragraph line break. 
 
-\section*{Variable 1}
+\tableofcontents
 
 
-
+\pagebreak
+\section{Loading data}
 
 \begin{Schunk}
 \begin{Sinput}
+> library(ggplot2)
+> library(ggthemes)
+> theme_set(theme_few())
+> library(tidyverse)
 > load_first_object <- function(fname){
 +   #this function was written by Dr. Rhonda Rosychuk at the U of A 
 +   e <- new.env(parent = parent.frame())
@@ -50,90 +55,141 @@
 +   return(e[[ls(e)[1]]])
 + }
 > weatherdata = load_first_object("../../rda_files/all_data.rda")
-> summary(weatherdata)
+\end{Sinput}
+\end{Schunk}
+
+
+
+\section{Accidents over Time}
+
+\subsection{Day of the Week} 
+
+Distribution of accidents throughout the week:
+
+\begin{Schunk}
+\begin{Sinput}
+> #reordering factor
+> weeknames = c("SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY")
+> weatherdata$Day.Of.Week = factor(weatherdata$Day.Of.Week,
++                           levels=weeknames)
+> weatherdata$Month.Of.Year = factor(weatherdata$Month.Of.Year, 
++                             levels=toupper(month.name))
+> table(weatherdata$Day.Of.Week)
 \end{Sinput}
 \begin{Soutput}
-    linker          Date.Of.Loss.Year Animal.Flag              Crash.Severity 
- Length:56136       Min.   :2017      No :54118   CASUALTY CRASH      :11473  
- Class :character   1st Qu.:2018      Yes: 2018   PROPERTY DAMAGE ONLY:44663  
- Mode  :character   Median :2019                                              
-                    Mean   :2019                                              
-                    3rd Qu.:2020                                              
-                    Max.   :2021                                              
-                                                                              
- Cyclist.Flag    Day.Of.Week                Derived.Crash.Configuration
- No :55725    FRIDAY   :9316   REAR END                   :13024       
- Yes:  411    MONDAY   :8024   SINGLE VEHICLE             :12495       
-              SATURDAY :6753   UNDETERMINED               :11453       
-              SUNDAY   :5464   SIDE IMPACT                :11369       
-              THURSDAY :9061   CONFLICTED                 : 3068       
-              TUESDAY  :8728   SIDE SWIPE - SAME DIRECTION: 1833       
-              WEDNESDAY:8790   (Other)                    : 2894       
- Heavy.Veh.Flag Intersection.Crash  Month.Of.Year   Motorcycle.Flag
- No :54085      No :31677          JULY    : 5152   No :55673      
- Yes: 2051      Yes:24459          DECEMBER: 5095   Yes:  463      
-                                   JANUARY : 5063                  
-                                   AUGUST  : 4907                  
-                                   OCTOBER : 4836                  
-                                   JUNE    : 4735                  
-                                   (Other) :26348                  
- Parked.Vehicle.Flag Parking.Lot.Flag Pedestrian.Flag
- No :38567           No :37189        No :55790      
- Yes:17569           Yes:18947        Yes:  346      
-                                                     
-                                                     
-                                                     
-                                                     
-                                                     
-  Street.Full.Name..ifnull.     Time.Category      Municipality.Name
- HWY 97        : 6019       12:00-14:59:14870   KELOWNA     :45943  
- HARVEY AVE    : 3168       15:00-17:59:14473   WEST KELOWNA:10193  
- HWY 33        : 2064       09:00-11:59:11021                       
- GORDON DR     : 1921       18:00-20:59: 5805                       
- LAKESHORE RD  : 1372       06:00-08:59: 5489                       
- SPRINGFIELD RD: 1326       21:00-23:59: 2684                       
- (Other)       :40266       (Other)    : 1794                       
- Road.Location.Description       Street.Full.Name Metric.Selector
- UNKNOWN     : 2211        HWY 97        : 6019   Min.   :1.000  
- HWY 97      : 1961        HARVEY AVE    : 3168   1st Qu.:1.000  
- HARVEY AVE  : 1670        HWY 33        : 2064   Median :1.000  
- LAKESHORE RD:  932        GORDON DR     : 1921   Mean   :1.006  
- LOUIE DR    :  751        LAKESHORE RD  : 1372   3rd Qu.:1.000  
- HWY 33      :  715        SPRINGFIELD RD: 1326   Max.   :3.000  
- (Other)     :47896        (Other)       :40266                  
- Total.Crashes   Total.Victims      Temp...C.      Dew.Point.Temp...C.
- Min.   :1.000   Min.   :0.0000   Min.   :-22.43   Min.   :-24.433    
- 1st Qu.:1.000   1st Qu.:0.0000   1st Qu.:  1.60   1st Qu.: -2.033    
- Median :1.000   Median :0.0000   Median : 10.37   Median :  2.200    
- Mean   :1.006   Mean   :0.2917   Mean   : 10.92   Mean   :  1.906    
- 3rd Qu.:1.000   3rd Qu.:0.0000   3rd Qu.: 20.00   3rd Qu.:  7.300    
- Max.   :3.000   Max.   :9.0000   Max.   : 37.73   Max.   : 18.733    
-                                  NA's   :35       NA's   :35         
-  Rel.Hum....     Precip..Amount..mm. Wind.Dir..10s.deg. Wind.Spd..km.h. 
- Min.   : 12.67   Min.   :0.00000     Min.   : 1.00      Min.   : 0.000  
- 1st Qu.: 38.00   1st Qu.:0.00000     1st Qu.:15.67      1st Qu.: 4.667  
- Median : 62.00   Median :0.00000     Median :19.50      Median : 8.000  
- Mean   : 60.51   Mean   :0.03111     Mean   :21.16      Mean   :10.277  
- 3rd Qu.: 82.33   3rd Qu.:0.00000     3rd Qu.:31.00      3rd Qu.:13.667  
- Max.   :100.00   Max.   :4.00000     Max.   :36.00      Max.   :51.333  
- NA's   :35       NA's   :35          NA's   :4020       NA's   :35      
- Visibility..km. Stn.Press..kPa.   Wind.Chill          Fog         
- Min.   : 0.20   Min.   :94.08   Min.   :-27.50   Min.   :0.00000  
- 1st Qu.:16.10   1st Qu.:96.10   1st Qu.:-12.33   1st Qu.:0.00000  
- Median :16.10   Median :96.51   Median : -6.33   Median :0.00000  
- Mean   :15.15   Mean   :96.56   Mean   : -8.48   Mean   :0.07179  
- 3rd Qu.:16.10   3rd Qu.:96.90   3rd Qu.: -4.00   3rd Qu.:0.00000  
- Max.   :16.10   Max.   :99.33   Max.   : -1.00   Max.   :1.00000  
- NA's   :36      NA's   :35      NA's   :45152                     
- Freezing.Rain           Snow              Rain       Thunderstorms     
- Min.   :0.00e+00   Min.   :0.00000   Min.   :0.000   Min.   :0.000000  
- 1st Qu.:0.00e+00   1st Qu.:0.00000   1st Qu.:0.000   1st Qu.:0.000000  
- Median :0.00e+00   Median :0.00000   Median :0.000   Median :0.000000  
- Mean   :3.56e-05   Mean   :0.06789   Mean   :0.108   Mean   :0.002387  
- 3rd Qu.:0.00e+00   3rd Qu.:0.00000   3rd Qu.:0.000   3rd Qu.:0.000000  
- Max.   :1.00e+00   Max.   :1.00000   Max.   :1.000   Max.   :1.000000  
+   SUNDAY    MONDAY   TUESDAY WEDNESDAY  THURSDAY    FRIDAY  SATURDAY 
+     5464      8024      8728      8790      9061      9316      6753 
 \end{Soutput}
+\begin{Sinput}
+> weatherdata %>%
++   ggplot(aes(x=Day.Of.Week)) +
++   geom_histogram(stat='count', colour='#00008b', fill='#6495ed') + 
++   xlab('') + 
++   ylab('Count') + 
++   scale_x_discrete(labels=c(substr(weeknames, start=1, stop=3)))
+\end{Sinput}
 \end{Schunk}
+\includegraphics{variableinvestigation-002}
+
+
+\subsection{Month of the Year}
+
+\begin{Schunk}
+\begin{Sinput}
+> #making monthnumber column
+> weatherdata[,"monthnumber"] = match(tolower(weatherdata$Month.Of.Year), 
++                             tolower(month.name))
+> table(weatherdata$Month.Of.Year)
+\end{Sinput}
+\begin{Soutput}
+  JANUARY  FEBRUARY     MARCH     APRIL       MAY      JUNE      JULY    AUGUST 
+     5063      4728      4120      3825      4475      4735      5152      4907 
+SEPTEMBER   OCTOBER  NOVEMBER  DECEMBER 
+     4632      4836      4568      5095 
+\end{Soutput}
+\begin{Sinput}
+> weatherdata %>%
++   ggplot(aes(x=Month.Of.Year)) +
++   geom_histogram(stat='count', colour='#00008b', fill='#6495ed') + 
++   xlab('') + 
++   ylab('Count') + 
++   scale_x_discrete(labels=(month.abb))
+\end{Sinput}
+\end{Schunk}
+\includegraphics{variableinvestigation-003}
+
+
+
+
+
+\section{Temperature}
+
+\begin{Schunk}
+\begin{Sinput}
+> summary(weatherdata$Temp...C.)
+\end{Sinput}
+\begin{Soutput}
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+ -22.43    1.60   10.37   10.92   20.00   37.73      35 
+\end{Soutput}
+\begin{Sinput}
+> weatherdata %>%
++   ggplot(aes(x=Temp...C.)) +
++   geom_histogram(colour='#00008b', fill='#6495ed', bins=20) + 
++   xlab('Temperature') + 
++   ylab('Count') + 
++   scale_x_continuous(labels = scales::label_number(suffix = "°C", accuracy=1), 
++                      limits = c(-40, 40)) 
+\end{Sinput}
+\end{Schunk}
+\includegraphics{variableinvestigation-004}
+
+\begin{Schunk}
+\begin{Sinput}
+> weatherdata %>% 
++   ggplot(aes(x=monthnumber, y=Temp...C.)) + 
++   geom_boxplot(aes(x=Month.Of.Year), colour='#00008b', fill='#6495ed') + 
++   geom_smooth(stat = 'summary', alpha = 0.2, fill = '#6495ed', color = '#00008b',
++                 fun.data = median_hilow, fun.args = list(conf.int = 1)) +
++   #geom_line(stat='summary', fun='median', color='#00008b', lwd=1.2) + 
++   xlab('') + 
++   ylab('Temperature') + 
++   scale_x_discrete(labels=month.abb) + 
++   scale_y_continuous(labels = scales::label_number(suffix = "°C")) + 
++   theme(panel.grid.major.y = element_line(color = "#8ccde3",
++                                   size = 0.25,
++                                   linetype = 2))
+\end{Sinput}
+\end{Schunk}
+\includegraphics{variableinvestigation-005}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\pagebreak
+\section{Crash Severity}
+
+
+
+
 
 
 \end{document}
