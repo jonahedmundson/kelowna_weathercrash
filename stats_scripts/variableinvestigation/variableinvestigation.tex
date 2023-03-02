@@ -49,12 +49,27 @@
 > theme_set(theme_few())
 > library(tidyverse)
 > load_first_object <- function(fname){
-+   #this function was written by Dr. Rhonda Rosychuk at the U of A 
++   #this function was written by Dr. Rhonda Rosychuk at the U of A
 +   e <- new.env(parent = parent.frame())
 +   load(fname, e)
 +   return(e[[ls(e)[1]]])
 + }
-> weatherdata = load_first_object("../../rda_files/all_data.rda")
+> #cleaned and combined
+> alldata = load_first_object("../../rda_files/all_data.rda")
+> #weatherdata
+> weatherdata = c()
+> for (i in c(2017:2021)){
++   for (j in c(1:12)){
++     temp = subset(read.csv(paste0('../../weatherdata/en_climate_hourly_BC_1123939_', 
++       sprintf("%02d", j), '-', i, '_P1H.csv')), 
++       select = - c(`Temp.Flag`, 
++       `Dew.Point.Temp.Flag`, `Rel.Hum.Flag`,
++       `Precip..Amount.Flag`, `Wind.Dir.Flag`, 
++       `Wind.Spd.Flag`, `Visibility.Flag`, 
++       `Stn.Press.Flag`, `Hmdx`, `Hmdx.Flag`, `Wind.Chill.Flag`))
++     weatherdata = rbind(weatherdata, temp)
++   }
++ }
 \end{Sinput}
 \end{Schunk}
 
@@ -70,18 +85,18 @@ Distribution of accidents throughout the week:
 \begin{Sinput}
 > #reordering factor
 > weeknames = c("SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY")
-> weatherdata$Day.Of.Week = factor(weatherdata$Day.Of.Week,
+> alldata$Day.Of.Week = factor(alldata$Day.Of.Week,
 +                           levels=weeknames)
-> weatherdata$Month.Of.Year = factor(weatherdata$Month.Of.Year, 
+> alldata$Month.Of.Year = factor(alldata$Month.Of.Year, 
 +                             levels=toupper(month.name))
-> table(weatherdata$Day.Of.Week)
+> table(alldata$Day.Of.Week)
 \end{Sinput}
 \begin{Soutput}
    SUNDAY    MONDAY   TUESDAY WEDNESDAY  THURSDAY    FRIDAY  SATURDAY 
      5464      8024      8728      8790      9061      9316      6753 
 \end{Soutput}
 \begin{Sinput}
-> weatherdata %>%
+> alldata %>%
 +   ggplot(aes(x=Day.Of.Week)) +
 +   geom_histogram(stat='count', colour='#00008b', fill='#6495ed') + 
 +   xlab('') + 
@@ -97,9 +112,9 @@ Distribution of accidents throughout the week:
 \begin{Schunk}
 \begin{Sinput}
 > #making monthnumber column
-> weatherdata[,"monthnumber"] = match(tolower(weatherdata$Month.Of.Year), 
+> alldata[,"monthnumber"] = match(tolower(alldata$Month.Of.Year), 
 +                             tolower(month.name))
-> table(weatherdata$Month.Of.Year)
+> table(alldata$Month.Of.Year)
 \end{Sinput}
 \begin{Soutput}
   JANUARY  FEBRUARY     MARCH     APRIL       MAY      JUNE      JULY    AUGUST 
@@ -108,7 +123,7 @@ SEPTEMBER   OCTOBER  NOVEMBER  DECEMBER
      4632      4836      4568      5095 
 \end{Soutput}
 \begin{Sinput}
-> weatherdata %>%
+> alldata %>%
 +   ggplot(aes(x=Month.Of.Year)) +
 +   geom_histogram(stat='count', colour='#00008b', fill='#6495ed') + 
 +   xlab('') + 
@@ -126,14 +141,8 @@ SEPTEMBER   OCTOBER  NOVEMBER  DECEMBER
 
 \begin{Schunk}
 \begin{Sinput}
-> summary(weatherdata$Temp...C.)
-\end{Sinput}
-\begin{Soutput}
-   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
- -22.43    1.60   10.37   10.92   20.00   37.73      35 
-\end{Soutput}
-\begin{Sinput}
-> weatherdata %>%
+> summary(alldata$Temp...C.)
+> alldata %>%
 +   ggplot(aes(x=Temp...C.)) +
 +   geom_histogram(colour='#00008b', fill='#6495ed', bins=20) + 
 +   xlab('Temperature') + 
@@ -142,11 +151,36 @@ SEPTEMBER   OCTOBER  NOVEMBER  DECEMBER
 +                      limits = c(-40, 40)) 
 \end{Sinput}
 \end{Schunk}
-\includegraphics{variableinvestigation-004}
 
 \begin{Schunk}
 \begin{Sinput}
-> weatherdata %>% 
+> data.frame(
++   'Avg temp.' = mean(weatherdata$Temp...C., na.rm=TRUE),
++   'Avg crash temp.' = mean(alldata$Temp...C., na.rm = TRUE)
++ )
+\end{Sinput}
+\begin{Soutput}
+  Avg.temp. Avg.crash.temp.
+1  8.511442        10.91872
+\end{Soutput}
+\begin{Sinput}
+> ggplot(data=weatherdata, aes(x=Temp...C.)) + 
++   geom_density(colour='#1d2951', fill='#1d2951', alpha=0.9) + 
++   geom_density(data=alldata, colour='#6495ed', fill='#6495ed', alpha=0.6) + 
++   xlab('Temperature') + 
++   ylab('Density') + 
++   annotate(
++     geom="text", x=c(11, 28), y=c(0.035, 0.025), label=c("Year-round", "Crash temps"), color=c("#1d2951", "#6495ed")
++   )
+\end{Sinput}
+\end{Schunk}
+\includegraphics{variableinvestigation-005}
+
+
+
+\begin{Schunk}
+\begin{Sinput}
+> alldata %>% 
 +   ggplot(aes(x=monthnumber, y=Temp...C.)) + 
 +   geom_boxplot(aes(x=Month.Of.Year), colour='#00008b', fill='#6495ed') + 
 +   geom_smooth(stat = 'summary', alpha = 0.2, fill = '#6495ed', color = '#00008b',
@@ -161,7 +195,7 @@ SEPTEMBER   OCTOBER  NOVEMBER  DECEMBER
 +                                   linetype = 2))
 \end{Sinput}
 \end{Schunk}
-\includegraphics{variableinvestigation-005}
+\includegraphics{variableinvestigation-006}
 
 
 
