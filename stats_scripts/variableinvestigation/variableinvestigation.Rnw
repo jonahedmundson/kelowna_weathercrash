@@ -22,7 +22,7 @@
 \newcommand{\comment}[1]{}
 
 \begin{document}
-\SweaveOpts{concordance=TRUE}
+\SweaveOpts{concordance=TRUE, echo=FALSE}
 
 \begin{center}
 \Large{\textsc{Variable Investigation}}
@@ -41,7 +41,7 @@
 \pagebreak
 \section{Loading data}
 
-<<chunk1, echo=TRUE>>=
+<<chunk1>>=
 library(ggplot2)
 library(ggthemes)
 theme_set(theme_few())
@@ -55,6 +55,12 @@ load_first_object <- function(fname){
 
 #cleaned and combined
 alldata = load_first_object("../../rda_files/all_data.rda")
+
+#reading as.factor
+factors = c("Fog", "Freezing.Rain", "Snow", "Rain", "Thunderstorms")
+for (i in factors){
+  alldata[,i] = as.factor(alldata[,i])
+}
 
 #weatherdata
 weatherdata = c()
@@ -73,14 +79,39 @@ for (i in c(2017:2021)){
 @
 
 
+\section{Summary Statistics}
 
+<<ss, fig=TRUE>>=
+cat('Need to remove dew point temp and wind chill, 
+since they are so correlated with temperature.')
+cor(alldata[,c('Temp...C.', 'Dew.Point.Temp...C.', 'Wind.Chill')], use = 'complete.obs')
+alldata = alldata[,-c(23, 30)]
+
+cat('Summary of all variables:')
+summary(alldata)
+numeric = unlist(lapply(alldata, is.numeric), use.names = FALSE)
+numeric[2] = FALSE
+corrplot::corrplot(cor(alldata[,numeric], use = 'complete.obs'), method='number')
+@
+
+
+
+
+\pagebreak
 \section{Accidents over Time}
+
+\subsection{Throughout the Day}
+
+<<>>=
+#
+@
+
 
 \subsection{Day of the Week} 
 
 Distribution of accidents throughout the week:
 
-<<echo=TRUE, fig=TRUE>>=
+<<fig=TRUE>>=
 #reordering factor
 weeknames = c("SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY")
 alldata$Day.Of.Week = factor(alldata$Day.Of.Week,
@@ -98,9 +129,10 @@ alldata %>%
 @
 
 
+\pagebreak
 \subsection{Month of the Year}
 
-<<echo=TRUE, fig=TRUE>>=
+<<fig=TRUE>>=
 #making monthnumber column
 alldata[,"monthnumber"] = match(tolower(alldata$Month.Of.Year), 
                             tolower(month.name))
@@ -116,12 +148,29 @@ alldata %>%
 @
 
 
+\pagebreak
+\section{Over the Years}
+
+<<fig=TRUE>>=
+table(alldata$Date.Of.Loss.Year)
+
+alldata %>%
+  ggplot(aes(x=Date.Of.Loss.Year)) +
+  geom_histogram(stat='count', colour='#00008b', fill='#6495ed') + 
+  xlab('') + 
+  ylab('Count') 
+@
 
 
 
-\section{Temperature}
 
-<<echo=FALSE, fig=TRUE, include=FALSE, eval=FALSE>>=
+
+\pagebreak
+\section{Distributions of Weather Variables}
+
+\subsection{Temperature}
+
+<<fig=TRUE, include=FALSE, eval=FALSE>>=
 summary(alldata$Temp...C.)
 alldata %>%
   ggplot(aes(x=Temp...C.)) +
@@ -132,7 +181,7 @@ alldata %>%
                      limits = c(-40, 40)) 
 @
 
-<<echo=TRUE, fig=TRUE>>=
+<<fig=TRUE>>=
 data.frame(
   'Avg temp.' = mean(weatherdata$Temp...C., na.rm=TRUE),
   'Avg crash temp.' = mean(alldata$Temp...C., na.rm = TRUE)
@@ -150,7 +199,7 @@ ggplot(data=weatherdata, aes(x=Temp...C.)) +
 
 
 
-<<echo=TRUE, fig=TRUE>>=
+<<fig=TRUE>>=
 alldata %>% 
   ggplot(aes(x=monthnumber, y=Temp...C.)) + 
   geom_boxplot(aes(x=Month.Of.Year), colour='#00008b', fill='#6495ed') + 
@@ -168,6 +217,11 @@ alldata %>%
 
 
 
+\pagebreak
+\subsection{...}
+
+"Rel.Hum....", "Precip..Amount..mm.", 
+"Wind.Dir..10s.deg.", "Wind.Spd..km.h.", "Visibility..km.", "Stn.Press..kPa."
 
 
 
@@ -176,6 +230,58 @@ alldata %>%
 
 
 
+\section{Crash Subtypes}
+
+\subsection{All Combined}
+
+* nrow
+* intersection flag
+* months
+* day of the week
+* crash severity
+* street name
+* total victims
+* avg temp, "Rel.Hum....", "Precip..Amount..mm.", 
+"Wind.Dir..10s.deg.", "Wind.Spd..km.h.", "Visibility..km.", "Stn.Press..kPa."
+
+
+\pagebreak
+\subsection{Cyclist Crashes}
+
+
+
+
+
+
+
+
+\pagebreak
+\subsection{Animal Crashes}
+
+
+
+
+\pagebreak
+\subsection{Heavy Vehicle Crashes}
+
+
+
+
+\pagebreak
+\subsection{Motorcycle Crashes}
+
+
+
+
+\pagebreak
+\subsection{Parked Vehicle Crashes}
+
+
+
+
+
+\pagebreak
+\subsection{Pedestrian Crashes}
 
 
 
@@ -188,7 +294,7 @@ alldata %>%
 
 
 \pagebreak
-\section{Crash Severity}
+\section{}
 
 
 

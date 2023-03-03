@@ -749,6 +749,8 @@ Saving the cleaned dataset:
 
 \begin{Schunk}
 \begin{Sinput}
+> #removing 'metric selector' and 'streetname.ifnull'
+> alldata = alldata[,-c(15, 20)]
 > save(alldata, file = "../../rda_files/all_data.rda")
 \end{Sinput}
 \end{Schunk}

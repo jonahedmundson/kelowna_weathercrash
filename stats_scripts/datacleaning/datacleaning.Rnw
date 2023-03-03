@@ -467,6 +467,9 @@ head(alldata)
 Saving the cleaned dataset:
 
 <<finalchunk, echo=TRUE>>=
+#removing 'metric selector' and 'streetname.ifnull'
+alldata = alldata[,-c(15, 20)]
+
 save(alldata, file = "../../rda_files/all_data.rda")
 @
 

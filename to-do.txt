@@ -13,4 +13,8 @@ upon completion, write an article about it on medium (towards data science)
 
 use MLE w bootstrapping (581) to evaluate all model fits  --> or MSE from 571?
 
+neural net approach --> what weather conditions create what crash outcomes? (multiple outputs)
+
+make second dataframe --> combine to day total --> use daily weather conditions to predict daily number of crashes
+
 nice visualizations --> https://www.tylermw.com/3d-ggplots-with-rayshader/
