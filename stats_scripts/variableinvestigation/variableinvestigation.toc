@@ -8,15 +8,16 @@
 \contentsline {subsection}{\numberline {3.1}Temperature}{7}{subsection.3.1}%
 \contentsline {subsection}{\numberline {3.2}Relative Humidity}{9}{subsection.3.2}%
 \contentsline {subsection}{\numberline {3.3}Precipitation}{11}{subsection.3.3}%
-\contentsline {subsection}{\numberline {3.4}Wind Direction}{12}{subsection.3.4}%
-\contentsline {subsection}{\numberline {3.5}Visibility}{13}{subsection.3.5}%
-\contentsline {subsection}{\numberline {3.6}Air Pressure}{14}{subsection.3.6}%
-\contentsline {section}{\numberline {4}Crash Subtypes}{14}{section.4}%
-\contentsline {subsection}{\numberline {4.1}All Combined}{14}{subsection.4.1}%
-\contentsline {subsection}{\numberline {4.2}Cyclist Crashes}{15}{subsection.4.2}%
-\contentsline {subsection}{\numberline {4.3}Animal Crashes}{16}{subsection.4.3}%
-\contentsline {subsection}{\numberline {4.4}Heavy Vehicle Crashes}{17}{subsection.4.4}%
-\contentsline {subsection}{\numberline {4.5}Motorcycle Crashes}{18}{subsection.4.5}%
-\contentsline {subsection}{\numberline {4.6}Parked Vehicle Crashes}{19}{subsection.4.6}%
-\contentsline {subsection}{\numberline {4.7}Pedestrian Crashes}{20}{subsection.4.7}%
-\contentsline {section}{\numberline {5}}{21}{section.5}%
+\contentsline {subsection}{\numberline {3.4}Wind Speed}{12}{subsection.3.4}%
+\contentsline {subsection}{\numberline {3.5}Wind Direction}{14}{subsection.3.5}%
+\contentsline {subsection}{\numberline {3.6}Visibility}{16}{subsection.3.6}%
+\contentsline {subsection}{\numberline {3.7}Air Pressure}{17}{subsection.3.7}%
+\contentsline {section}{\numberline {4}Crash Subtypes}{17}{section.4}%
+\contentsline {subsection}{\numberline {4.1}All Combined}{17}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Cyclist Crashes}{18}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Animal Crashes}{19}{subsection.4.3}%
+\contentsline {subsection}{\numberline {4.4}Heavy Vehicle Crashes}{20}{subsection.4.4}%
+\contentsline {subsection}{\numberline {4.5}Motorcycle Crashes}{21}{subsection.4.5}%
+\contentsline {subsection}{\numberline {4.6}Parked Vehicle Crashes}{22}{subsection.4.6}%
+\contentsline {subsection}{\numberline {4.7}Pedestrian Crashes}{23}{subsection.4.7}%
+\contentsline {section}{\numberline {5}}{24}{section.5}%

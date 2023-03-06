@@ -136,8 +136,6 @@ alldata %>%
 #making monthnumber column
 alldata[,"monthnumber"] = match(tolower(alldata$Month.Of.Year), 
                             tolower(month.name))
-weatherdata[,"monthnumber"] = match(tolower(weatherdata$Month.Of.Year), 
-                            tolower(month.name))
 
 table(alldata$Month.Of.Year)
 
@@ -196,7 +194,8 @@ ggplot(data=weatherdata, aes(x=Temp...C.)) +
   annotate(
     geom="text", x=c(11, 28), y=c(0.035, 0.025), label=c("Year-round", "Crash temps"), 
     color=c("#1d2951", "#6495ed")
-  )
+  ) + 
+  scale_x_continuous(labels = scales::label_number(suffix = "°C"))
 @
 
 
@@ -230,12 +229,13 @@ data.frame(
 ggplot(data=weatherdata, aes(x=Rel.Hum....)) +
   geom_density(colour='#1d2951', fill='#1d2951', alpha=0.9) +
   geom_density(data=alldata, colour='#6495ed', fill='#6495ed', alpha=0.6) +
-  xlab('Relative Humidity (%)') +
+  xlab('Relative Humidity') +
   ylab('Density') +
 annotate(
-  geom="text", x=c(72, 30), y=c(0.0175, 0.0155), label=c("Year-round", "Crash temps"),
+  geom="text", x=c(72, 30), y=c(0.0175, 0.0155), label=c("Year-round", "Crash humidity"),
   color=c("#1d2951", "#6495ed")
-)
+) + 
+  scale_x_continuous(labels = scales::label_number(suffix = "%"))
 @
 
 <<fig=TRUE>>=
@@ -258,17 +258,64 @@ alldata %>%
 \pagebreak
 \subsection{Precipitation}
 
-<<fig=FALSE>>=
+<<fig=TRUE>>=
 data.frame(
-  'Avg humidity' = mean(weatherdata$'Precip..Amount..mm.', na.rm=TRUE),
-  'Avg crash humidity' = mean(alldata$'Precip..Amount..mm.', na.rm = TRUE)
+  'Avg precipitation' = mean(weatherdata$'Precip..Amount..mm.', na.rm=TRUE),
+  'Avg crash precipitation' = mean(alldata$'Precip..Amount..mm.', na.rm = TRUE)
 )
 
-#
+print('Rounded table of precipitation values:')
+table(round(alldata$Precip..Amount..mm.))
+print('Many are 0...')
+
+weatherdata %>%
+  ggplot(aes(y=Precip..Amount..mm., x=Month)) +
+  geom_area(stat = 'summary', fun = mean, lty = 0, 
+            fill = '#00008b', alpha=0.5) + 
+  geom_area(data=alldata, aes(x=monthnumber), stat = 'summary',
+            fun = mean, lty = 0, fill='#6495ed', alpha=0.6) +
+  annotate(
+  geom="text", x=c(8.63, 2), y=c(0.040, 0.043), label=c("Year-round", "Crash precip."),
+  color=c("#00008b", "#6495ed")
+) + 
+  ylab('Precipitation (avg. per 3 hr block)') + 
+  xlab('') +
+  scale_y_continuous(labels = scales::label_number(suffix = "mm")) + 
+  scale_x_continuous(breaks = 1:12, labels=month.abb)
 @
 
-<<fig=FALSE>>=
-#
+
+\pagebreak
+\subsection{Wind Speed}
+
+<<fig=TRUE>>=
+data.frame(
+  'Avg wind speed' = mean(weatherdata$'Wind.Spd..km.h.', na.rm=TRUE),
+  'Avg crash wind speed' = mean(alldata$'Wind.Spd..km.h.', na.rm = TRUE)
+)
+
+ggplot(data=weatherdata, aes(x=Wind.Spd..km.h.)) +
+  geom_density(colour='#1d2951', fill='#1d2951', alpha=0.9) +
+  geom_density(data=alldata, colour='#6495ed', fill='#6495ed', alpha=0.6) +
+  xlab('Wind Speed') +
+  ylab('Density') +
+annotate(
+  geom="text", x=c(9, 23), y=c(0.12, 0.025), label=c("Year-round", "Crash wind\n speed"),
+  color=c("#1d2951", "#6495ed")
+) + 
+  scale_x_continuous(labels = scales::label_number(suffix = "km/hr"),  limits=c(0, 40))
+@
+
+<<fig=TRUE>>=
+alldata %>% 
+  ggplot(aes(x=monthnumber, y=Wind.Spd..km.h.)) + 
+  geom_boxplot(aes(x=Month.Of.Year), colour='#00008b', fill='#6495ed') + 
+  geom_smooth(stat = 'summary', alpha = 0.2, fill = '#6495ed', color = '#00008b',
+                fun.data = median_hilow, fun.args = list(conf.int = 1)) +
+  xlab('') + 
+  ylab('Wind Speed') + 
+  scale_x_discrete(labels=month.abb) + 
+  scale_y_continuous(labels = scales::label_number(suffix = "km/hr"))
 @
 
 
@@ -276,14 +323,61 @@ data.frame(
 \pagebreak
 \subsection{Wind Direction}
 
+<<fig=TRUE>>=
+data.frame(
+  'Avg wind dir.' = mean(weatherdata$'Wind.Dir..10s.deg.', na.rm=TRUE),
+  'Avg crash wind dir.' = mean(alldata$'Wind.Dir..10s.deg.', na.rm = TRUE)
+)
 
+ggplot(data=weatherdata, aes(x=Wind.Dir..10s.deg.)) +
+  geom_density(colour='#1d2951', fill='#1d2951', alpha=0.9) +
+  geom_density(data=alldata, colour='#6495ed', fill='#6495ed', alpha=0.6) +
+  xlab('Wind Direction') +
+  ylab('Density') +
+annotate(
+  geom="text", x=c(3, 25), y=c(0.04, 0.05), label=c("Year-round", "Crash wind\n direction"),
+  color=c("#1d2951", "#6495ed")
+) + 
+  scale_x_continuous(labels = scales::label_number(suffix = "0°"),  limits=c(0, 40))
+@
+
+<<fig=TRUE>>=
+alldata %>% 
+  ggplot(aes(x=monthnumber, y=Wind.Dir..10s.deg.)) + 
+  geom_boxplot(aes(x=Month.Of.Year), colour='#00008b', fill='#6495ed') + 
+  geom_smooth(stat = 'summary', alpha = 0.2, fill = '#6495ed', color = '#00008b',
+                fun.data = median_hilow, fun.args = list(conf.int = 1)) +
+  xlab('') + 
+  ylab('Wind Direction') + 
+  scale_x_discrete(labels=month.abb) + 
+  scale_y_continuous(labels = scales::label_number(suffix = "0°"))
+@
 
 
 
 \pagebreak
 \subsection{Visibility}
 
+<<fig=FALSE>>=
+data.frame(
+  'Avg visibility' = mean(weatherdata$'Visibility..km.', na.rm=TRUE),
+  'Avg crash visibility' = mean(alldata$'Visibility..km.', na.rm = TRUE)
+)
+print('Very little differences in visibility...')
+print('Density plot isn\'t helpful because cases are so spread out.')
+@
 
+<<fig=TRUE>>=
+alldata %>% 
+  ggplot(aes(x=monthnumber, y=Visibility..km.)) + 
+  geom_boxplot(aes(x=Month.Of.Year), colour='#00008b', fill='#6495ed') + 
+  geom_smooth(stat = 'summary', alpha = 0.2, fill = '#6495ed', color = '#00008b',
+                fun.data = median_hilow, fun.args = list(conf.int = 1)) +
+  xlab('') + 
+  ylab('Visibility') + 
+  scale_x_discrete(labels=month.abb) + 
+  scale_y_continuous(labels = scales::label_number(suffix = "km"))
+@
 
 
 
