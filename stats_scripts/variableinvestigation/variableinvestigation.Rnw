@@ -39,7 +39,7 @@
 
 
 \pagebreak
-\section{Loading data}
+%\section{Loading data}
 
 <<chunk1>>=
 library(ggplot2)
@@ -85,7 +85,7 @@ for (i in c(2017:2021)){
 cat('Need to remove dew point temp and wind chill, 
 since they are so correlated with temperature.')
 cor(alldata[,c('Temp...C.', 'Dew.Point.Temp...C.', 'Wind.Chill')], use = 'complete.obs')
-alldata = alldata[,-c(23, 30)]
+alldata = alldata[,-c(22, 29)]
 
 cat('Summary of all variables:')
 summary(alldata)
@@ -136,6 +136,8 @@ alldata %>%
 #making monthnumber column
 alldata[,"monthnumber"] = match(tolower(alldata$Month.Of.Year), 
                             tolower(month.name))
+weatherdata[,"monthnumber"] = match(tolower(weatherdata$Month.Of.Year), 
+                            tolower(month.name))
 
 table(alldata$Month.Of.Year)
 
@@ -149,7 +151,7 @@ alldata %>%
 
 
 \pagebreak
-\section{Over the Years}
+\subsection{Over the Years}
 
 <<fig=TRUE>>=
 table(alldata$Date.Of.Loss.Year)
@@ -218,10 +220,76 @@ alldata %>%
 
 
 \pagebreak
-\subsection{...}
+\subsection{Relative Humidity}
 
-"Rel.Hum....", "Precip..Amount..mm.", 
-"Wind.Dir..10s.deg.", "Wind.Spd..km.h.", "Visibility..km.", "Stn.Press..kPa."
+<<fig=TRUE>>=
+data.frame(
+  'Avg humidity' = mean(weatherdata$'Rel.Hum....', na.rm=TRUE),
+  'Avg crash humidity' = mean(alldata$'Rel.Hum....', na.rm = TRUE)
+)
+ggplot(data=weatherdata, aes(x=Rel.Hum....)) +
+  geom_density(colour='#1d2951', fill='#1d2951', alpha=0.9) +
+  geom_density(data=alldata, colour='#6495ed', fill='#6495ed', alpha=0.6) +
+  xlab('Relative Humidity (%)') +
+  ylab('Density') +
+annotate(
+  geom="text", x=c(72, 30), y=c(0.0175, 0.0155), label=c("Year-round", "Crash temps"),
+  color=c("#1d2951", "#6495ed")
+)
+@
+
+<<fig=TRUE>>=
+alldata %>% 
+  ggplot(aes(x=monthnumber, y=Rel.Hum....)) + 
+  geom_boxplot(aes(x=Month.Of.Year), colour='#00008b', fill='#6495ed') + 
+  geom_smooth(stat = 'summary', alpha = 0.2, fill = '#6495ed', color = '#00008b',
+                fun.data = median_hilow, fun.args = list(conf.int = 1)) +
+  xlab('') + 
+  ylab('Relative Humidity') + 
+  scale_x_discrete(labels=month.abb) + 
+  scale_y_continuous(labels = scales::label_number(suffix = "%")) + 
+  theme(panel.grid.major.y = element_line(color = "#8ccde3",
+                                  size = 0.25,
+                                  linetype = 2))
+@
+
+
+
+\pagebreak
+\subsection{Precipitation}
+
+<<fig=FALSE>>=
+data.frame(
+  'Avg humidity' = mean(weatherdata$'Precip..Amount..mm.', na.rm=TRUE),
+  'Avg crash humidity' = mean(alldata$'Precip..Amount..mm.', na.rm = TRUE)
+)
+
+#
+@
+
+<<fig=FALSE>>=
+#
+@
+
+
+
+\pagebreak
+\subsection{Wind Direction}
+
+
+
+
+
+\pagebreak
+\subsection{Visibility}
+
+
+
+
+
+\pagebreak
+\subsection{Air Pressure}
+
 
 
 

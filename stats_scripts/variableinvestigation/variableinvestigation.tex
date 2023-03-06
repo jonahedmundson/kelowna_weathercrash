@@ -40,7 +40,7 @@
 
 
 \pagebreak
-\section{Loading data}
+%\section{Loading data}
 
 
 
@@ -101,14 +101,14 @@ Summary of all variables:
                       LOUIE DR    :  751        LAKESHORE RD  : 1372  
                       HWY 33      :  715        SPRINGFIELD RD: 1326  
                       (Other)     :47896        (Other)       :40266  
- Total.Crashes   Total.Victims      Temp...C.      Dew.Point.Temp...C.
- Min.   :1.000   Min.   :0.0000   Min.   :-22.43   Min.   :-24.433    
- 1st Qu.:1.000   1st Qu.:0.0000   1st Qu.:  1.60   1st Qu.: -2.033    
- Median :1.000   Median :0.0000   Median : 10.37   Median :  2.200    
- Mean   :1.006   Mean   :0.2917   Mean   : 10.92   Mean   :  1.906    
- 3rd Qu.:1.000   3rd Qu.:0.0000   3rd Qu.: 20.00   3rd Qu.:  7.300    
- Max.   :3.000   Max.   :9.0000   Max.   : 37.73   Max.   : 18.733    
-                                  NA's   :35       NA's   :35         
+ Total.Crashes   Total.Victims      Temp...C.       Rel.Hum....    
+ Min.   :1.000   Min.   :0.0000   Min.   :-22.43   Min.   : 12.67  
+ 1st Qu.:1.000   1st Qu.:0.0000   1st Qu.:  1.60   1st Qu.: 38.00  
+ Median :1.000   Median :0.0000   Median : 10.37   Median : 62.00  
+ Mean   :1.006   Mean   :0.2917   Mean   : 10.92   Mean   : 60.51  
+ 3rd Qu.:1.000   3rd Qu.:0.0000   3rd Qu.: 20.00   3rd Qu.: 82.33  
+ Max.   :3.000   Max.   :9.0000   Max.   : 37.73   Max.   :100.00  
+                                  NA's   :35       NA's   :35      
  Precip..Amount..mm. Wind.Dir..10s.deg. Wind.Spd..km.h.  Visibility..km.
  Min.   :0.00000     Min.   : 1.00      Min.   : 0.000   Min.   : 0.20  
  1st Qu.:0.00000     1st Qu.:15.67      1st Qu.: 4.667   1st Qu.:16.10  
@@ -117,17 +117,14 @@ Summary of all variables:
  3rd Qu.:0.00000     3rd Qu.:31.00      3rd Qu.:13.667   3rd Qu.:16.10  
  Max.   :4.00000     Max.   :36.00      Max.   :51.333   Max.   :16.10  
  NA's   :35          NA's   :4020       NA's   :35       NA's   :36     
- Stn.Press..kPa.   Wind.Chill     Freezing.Rain Snow      Rain     
- Min.   :94.08   Min.   :-27.50   0:56134       0:52325   0:50075  
- 1st Qu.:96.10   1st Qu.:-12.33   1:    2       1: 3811   1: 6061  
- Median :96.51   Median : -6.33                                    
- Mean   :96.56   Mean   : -8.48                                    
- 3rd Qu.:96.90   3rd Qu.: -4.00                                    
- Max.   :99.33   Max.   : -1.00                                    
- NA's   :35      NA's   :45152                                     
- Thunderstorms
- 0:56002      
- 1:  134      
+ Stn.Press..kPa. Fog       Freezing.Rain Snow      Rain      Thunderstorms
+ Min.   :94.08   0:52106   0:56134       0:52325   0:50075   0:56002      
+ 1st Qu.:96.10   1: 4030   1:    2       1: 3811   1: 6061   1:  134      
+ Median :96.51                                                            
+ Mean   :96.56                                                            
+ 3rd Qu.:96.90                                                            
+ Max.   :99.33                                                            
+ NA's   :35                                                               
 \end{Soutput}
 \end{Schunk}
 \includegraphics{variableinvestigation-ss}
@@ -137,6 +134,10 @@ Summary of all variables:
 
 \pagebreak
 \section{Accidents over Time}
+
+\subsection{Throughout the Day}
+
+
 
 \subsection{Day of the Week} 
 
@@ -148,7 +149,7 @@ Distribution of accidents throughout the week:
      5464      8024      8728      8790      9061      9316      6753 
 \end{Soutput}
 \end{Schunk}
-\includegraphics{variableinvestigation-003}
+\includegraphics{variableinvestigation-004}
 
 
 \pagebreak
@@ -162,11 +163,11 @@ SEPTEMBER   OCTOBER  NOVEMBER  DECEMBER
      4632      4836      4568      5095 
 \end{Soutput}
 \end{Schunk}
-\includegraphics{variableinvestigation-004}
+\includegraphics{variableinvestigation-005}
 
 
 \pagebreak
-\section{Over the Years}
+\subsection{Over the Years}
 
 \begin{Schunk}
 \begin{Soutput}
@@ -174,14 +175,16 @@ SEPTEMBER   OCTOBER  NOVEMBER  DECEMBER
 12734 12324 11148  9275 10655 
 \end{Soutput}
 \end{Schunk}
-\includegraphics{variableinvestigation-005}
+\includegraphics{variableinvestigation-006}
 
 
 
 
 
 \pagebreak
-\section{Temperature}
+\section{Distributions of Weather Variables}
+
+\subsection{Temperature}
 
 
 \begin{Schunk}
@@ -190,11 +193,121 @@ SEPTEMBER   OCTOBER  NOVEMBER  DECEMBER
 1  8.511442        10.91872
 \end{Soutput}
 \end{Schunk}
-\includegraphics{variableinvestigation-007}
-
-
-
 \includegraphics{variableinvestigation-008}
+
+
+
+\includegraphics{variableinvestigation-009}
+
+
+
+\pagebreak
+\subsection{Relative Humidity}
+
+\begin{Schunk}
+\begin{Soutput}
+  Avg.humidity Avg.crash.humidity
+1     69.32555           60.50743
+\end{Soutput}
+\end{Schunk}
+\includegraphics{variableinvestigation-010}
+
+\includegraphics{variableinvestigation-011}
+
+
+
+\pagebreak
+\subsection{Precipitation}
+
+\begin{Schunk}
+\begin{Soutput}
+  Avg.humidity Avg.crash.humidity
+1   0.02998858         0.03110818
+\end{Soutput}
+\end{Schunk}
+
+
+
+
+\pagebreak
+\subsection{Wind Direction}
+
+
+
+
+
+\pagebreak
+\subsection{Visibility}
+
+
+
+
+
+\pagebreak
+\subsection{Air Pressure}
+
+
+
+
+
+
+
+
+
+\section{Crash Subtypes}
+
+\subsection{All Combined}
+
+* nrow
+* intersection flag
+* months
+* day of the week
+* crash severity
+* street name
+* total victims
+* avg temp, "Rel.Hum....", "Precip..Amount..mm.", 
+"Wind.Dir..10s.deg.", "Wind.Spd..km.h.", "Visibility..km.", "Stn.Press..kPa."
+
+
+\pagebreak
+\subsection{Cyclist Crashes}
+
+
+
+
+
+
+
+
+\pagebreak
+\subsection{Animal Crashes}
+
+
+
+
+\pagebreak
+\subsection{Heavy Vehicle Crashes}
+
+
+
+
+\pagebreak
+\subsection{Motorcycle Crashes}
+
+
+
+
+\pagebreak
+\subsection{Parked Vehicle Crashes}
+
+
+
+
+
+\pagebreak
+\subsection{Pedestrian Crashes}
+
+
 
 
 
@@ -205,7 +318,7 @@ SEPTEMBER   OCTOBER  NOVEMBER  DECEMBER
 
 
 \pagebreak
-\section{Crash Severity}
+\section{}
 
 
 
