@@ -1,23 +1,23 @@
 \contentsline {section}{\numberline {1}Summary Statistics}{2}{section.1}%
 \contentsline {section}{\numberline {2}Accidents over Time}{4}{section.2}%
 \contentsline {subsection}{\numberline {2.1}Throughout the Day}{4}{subsection.2.1}%
-\contentsline {subsection}{\numberline {2.2}Day of the Week}{4}{subsection.2.2}%
-\contentsline {subsection}{\numberline {2.3}Month of the Year}{5}{subsection.2.3}%
-\contentsline {subsection}{\numberline {2.4}Over the Years}{6}{subsection.2.4}%
-\contentsline {section}{\numberline {3}Distributions of Weather Variables}{7}{section.3}%
-\contentsline {subsection}{\numberline {3.1}Temperature}{7}{subsection.3.1}%
-\contentsline {subsection}{\numberline {3.2}Relative Humidity}{9}{subsection.3.2}%
-\contentsline {subsection}{\numberline {3.3}Precipitation}{11}{subsection.3.3}%
-\contentsline {subsection}{\numberline {3.4}Wind Speed}{12}{subsection.3.4}%
-\contentsline {subsection}{\numberline {3.5}Wind Direction}{14}{subsection.3.5}%
-\contentsline {subsection}{\numberline {3.6}Visibility}{16}{subsection.3.6}%
-\contentsline {subsection}{\numberline {3.7}Air Pressure}{17}{subsection.3.7}%
-\contentsline {section}{\numberline {4}Crash Subtypes}{17}{section.4}%
-\contentsline {subsection}{\numberline {4.1}All Combined}{17}{subsection.4.1}%
-\contentsline {subsection}{\numberline {4.2}Cyclist Crashes}{18}{subsection.4.2}%
-\contentsline {subsection}{\numberline {4.3}Animal Crashes}{19}{subsection.4.3}%
-\contentsline {subsection}{\numberline {4.4}Heavy Vehicle Crashes}{20}{subsection.4.4}%
-\contentsline {subsection}{\numberline {4.5}Motorcycle Crashes}{21}{subsection.4.5}%
-\contentsline {subsection}{\numberline {4.6}Parked Vehicle Crashes}{22}{subsection.4.6}%
-\contentsline {subsection}{\numberline {4.7}Pedestrian Crashes}{23}{subsection.4.7}%
-\contentsline {section}{\numberline {5}}{24}{section.5}%
+\contentsline {subsection}{\numberline {2.2}Day of the Week}{5}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Month of the Year}{6}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.4}Over the Years}{7}{subsection.2.4}%
+\contentsline {section}{\numberline {3}Distributions of Weather Variables}{8}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Temperature}{8}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Relative Humidity}{10}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Precipitation}{12}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}Wind Speed}{13}{subsection.3.4}%
+\contentsline {subsection}{\numberline {3.5}Wind Direction}{15}{subsection.3.5}%
+\contentsline {subsection}{\numberline {3.6}Visibility}{17}{subsection.3.6}%
+\contentsline {subsection}{\numberline {3.7}Air Pressure}{18}{subsection.3.7}%
+\contentsline {section}{\numberline {4}Crash Subtypes}{19}{section.4}%
+\contentsline {subsection}{\numberline {4.1}All Combined}{19}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Cyclist Crashes}{21}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Animal Crashes}{23}{subsection.4.3}%
+\contentsline {subsection}{\numberline {4.4}Heavy Vehicle Crashes}{25}{subsection.4.4}%
+\contentsline {subsection}{\numberline {4.5}Motorcycle Crashes}{27}{subsection.4.5}%
+\contentsline {subsection}{\numberline {4.6}Parked Vehicle Crashes}{29}{subsection.4.6}%
+\contentsline {subsection}{\numberline {4.7}Pedestrian Crashes}{31}{subsection.4.7}%
+\contentsline {section}{\numberline {5}}{33}{section.5}%

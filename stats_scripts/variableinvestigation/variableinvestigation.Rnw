@@ -102,11 +102,19 @@ corrplot::corrplot(cor(alldata[,numeric], use = 'complete.obs'), method='number'
 
 \subsection{Throughout the Day}
 
-<<>>=
-#
+<<fig=TRUE>>=
+table(alldata$Time.Category)
+
+alldata %>%
+  ggplot(aes(x=Time.Category)) +
+  geom_histogram(stat='count', colour='#00008b', fill='#6495ed') + 
+  xlab('') + 
+  ylab('Count') + 
+  theme(axis.text.x = element_text(angle = 20, vjust = 1, hjust=1))
 @
 
 
+\pagebreak
 \subsection{Day of the Week} 
 
 Distribution of accidents throughout the week:
@@ -264,9 +272,9 @@ data.frame(
   'Avg crash precipitation' = mean(alldata$'Precip..Amount..mm.', na.rm = TRUE)
 )
 
-print('Rounded table of precipitation values:')
+cat('Rounded table of precipitation values:')
 table(round(alldata$Precip..Amount..mm.))
-print('Many are 0...')
+cat('Many are 0...')
 
 weatherdata %>%
   ggplot(aes(y=Precip..Amount..mm., x=Month)) +
@@ -363,8 +371,8 @@ data.frame(
   'Avg visibility' = mean(weatherdata$'Visibility..km.', na.rm=TRUE),
   'Avg crash visibility' = mean(alldata$'Visibility..km.', na.rm = TRUE)
 )
-print('Very little differences in visibility...')
-print('Density plot isn\'t helpful because cases are so spread out.')
+cat('Very little differences in visibility...')
+cat('Density plot isn\'t helpful because cases are so spread out.')
 @
 
 <<fig=TRUE>>=
@@ -384,6 +392,23 @@ alldata %>%
 \pagebreak
 \subsection{Air Pressure}
 
+<<>>=
+data.frame(
+  'Avg air pressure' = mean(weatherdata$Stn.Press..kPa., na.rm=TRUE),
+  'Avg crash air pressure' = mean(alldata$Stn.Press..kPa., na.rm = TRUE)
+)
+
+ggplot(data=weatherdata, aes(x=Stn.Press..kPa.)) +
+  geom_density(colour='#1d2951', fill='#1d2951', alpha=0.9) +
+  geom_density(data=alldata, colour='#6495ed', fill='#6495ed', alpha=0.6) +
+  xlab('Air Pressure') +
+  ylab('Density') +
+annotate(
+  geom="text", x=c(98, 97.3), y=c(0.25, 0.6), label=c("Year-round", "Crashes"),
+  color=c("#1d2951", "#6495ed")
+) +
+  scale_x_continuous(labels = scales::label_number(suffix = " kPa"))
+@
 
 
 
@@ -392,25 +417,102 @@ alldata %>%
 
 
 
+\pagebreak
 \section{Crash Subtypes}
 
 \subsection{All Combined}
 
-* nrow
-* intersection flag
-* months
-* day of the week
-* crash severity
-* street name
-* total victims
-* avg temp, "Rel.Hum....", "Precip..Amount..mm.", 
-"Wind.Dir..10s.deg.", "Wind.Spd..km.h.", "Visibility..km.", "Stn.Press..kPa."
+<<>>=
+cat('-----------------\nNumber of crashes: ', nrow(alldata), sep='')
+cat('-----------------\nNumber of intersection crashes: ', unname(table(alldata$Intersection.Crash)['Yes']), " (", round(unname(table(alldata$Intersection.Crash)['Yes'])*100/nrow(alldata), 1), "%)", sep='')
+cat('-----------------\nNumber of casualty crashes: ', unname(table(alldata$Crash.Severity)['CASUALTY CRASH']), " (", round(unname(table(alldata$Crash.Severity)['CASUALTY CRASH'])*100/nrow(alldata), 1), "%)", sep='')
+cat('-----------------\nTop 5 most common streets:')
+table(alldata$Street.Full.Name)[order(table(alldata$Street.Full.Name), decreasing = TRUE)][1:5]
+cat('-----------------\nAvg. victims per year: ', round(sum(alldata$Total.Victims)/5), sep='')
+cat('-----------------\nMonths of the year: (same as above)')
+table(alldata$Month.Of.Year)
+cat('-----------------\nDays of the week: (same as above)')
+table(alldata$Day.Of.Week)
+cat('-----------------\nAvg. Temperature: (same as above)')
+data.frame(
+  'Avg temp.' = mean(weatherdata$Temp...C., na.rm=TRUE),
+  'Avg crash temp.' = mean(alldata$Temp...C., na.rm = TRUE)
+)
+cat('-----------------\nAvg Relative Humidity: (same as above)')
+data.frame(
+  'Avg humidity' = mean(weatherdata$'Rel.Hum....', na.rm=TRUE),
+  'Avg crash humidity' = mean(alldata$'Rel.Hum....', na.rm = TRUE)
+)
+cat('-----------------\nAvg. Precipitation Amount (mm): (same as above)')
+data.frame(
+  'Avg precipitation' = mean(weatherdata$'Precip..Amount..mm.', na.rm=TRUE),
+  'Avg crash precipitation' = mean(alldata$'Precip..Amount..mm.', na.rm = TRUE)
+)
+cat('-----------------\nAvg. Wind Speed (km/h): (same as above)')
+data.frame(
+  'Avg wind speed' = mean(weatherdata$'Wind.Spd..km.h.', na.rm=TRUE),
+  'Avg crash wind speed' = mean(alldata$'Wind.Spd..km.h.', na.rm = TRUE)
+)
+cat('-----------------\nAvg. Visibility (km): (same as above)')
+data.frame(
+  'Avg visibility' = mean(weatherdata$'Visibility..km.', na.rm=TRUE),
+  'Avg crash visibility' = mean(alldata$'Visibility..km.', na.rm = TRUE)
+)
+@
+
+
 
 
 \pagebreak
 \subsection{Cyclist Crashes}
 
+<<>>=
+cyclist = alldata[alldata$Cyclist.Flag == 'Yes',]
+@
 
+<<>>=
+cat('-----------------\nNumber of crashes: ', nrow(cyclist), sep='')
+cat('-----------------\nNumber of intersection crashes: ', unname(table(cyclist$Intersection.Crash)['Yes']), " (", round(unname(table(cyclist$Intersection.Crash)['Yes'])*100/nrow(cyclist), 1), "%)", sep='')
+cat('-----------------\nNumber of casualty crashes: ', unname(table(cyclist$Crash.Severity)['CASUALTY CRASH']), " (", round(unname(table(cyclist$Crash.Severity)['CASUALTY CRASH'])*100/nrow(cyclist), 1), "%)", sep='')
+cat('-----------------\nTop 5 most common streets:')
+table(cyclist$Street.Full.Name)[order(table(cyclist$Street.Full.Name), decreasing = TRUE)][1:5]
+cat('-----------------\nAvg. victims per year: ', round(sum(cyclist$Total.Victims)/5), sep='')
+cat('-----------------\nMonths of the year:')
+table(cyclist$Month.Of.Year)
+cat('-----------------\nDays of the week:')
+table(cyclist$Day.Of.Week)
+cat('-----------------\nAvg. Temperature:')
+data.frame(
+  'Avg temp.' = mean(weatherdata$Temp...C., na.rm=TRUE),
+  'Avg crash temp.' = mean(alldata$Temp...C., na.rm = TRUE),
+  'Avg cyclist crash temp.' = mean(cyclist$Temp...C., na.rm = TRUE)
+)
+cat('-----------------\nAvg Relative Humidity:')
+data.frame(
+  'Avg humidity' = mean(weatherdata$'Rel.Hum....', na.rm=TRUE),
+  'Avg crash humidity' = mean(alldata$'Rel.Hum....', na.rm = TRUE),
+  'Avg cyclist crash humidity' = mean(cyclist$'Rel.Hum....', na.rm = TRUE)
+)
+cat('-----------------\nAvg. Precipitation Amount (mm):')
+data.frame(
+  'Avg precipitation' = mean(weatherdata$'Precip..Amount..mm.', na.rm=TRUE),
+  'Avg crash precipitation' = mean(alldata$'Precip..Amount..mm.', na.rm = TRUE),
+  'Avg cyclist crash precipitation' = mean(cyclist$'Precip..Amount..mm.', na.rm = TRUE)
+)
+cat('-----------------\nAvg. Wind Speed (km/h):')
+data.frame(
+  'Avg wind speed' = mean(weatherdata$'Wind.Spd..km.h.', na.rm=TRUE),
+  'Avg crash wind speed' = mean(alldata$'Wind.Spd..km.h.', na.rm = TRUE),
+  'Avg cyclist crash wind speed' = mean(cyclist$'Wind.Spd..km.h.', na.rm = TRUE)
+)
+cat('-----------------\nAvg. Visibility (km):')
+data.frame(
+  'Avg visibility' = mean(weatherdata$'Visibility..km.', na.rm=TRUE),
+  'Avg crash visibility' = mean(alldata$'Visibility..km.', na.rm = TRUE),
+  'Avg cyclist crash visibility' = mean(cyclist$'Visibility..km.', na.rm = TRUE)
+)
+rm(cyclist)
+@
 
 
 
@@ -420,32 +522,265 @@ alldata %>%
 \pagebreak
 \subsection{Animal Crashes}
 
+<<>>=
+animal = alldata[alldata$Animal.Flag == 'Yes',]
+@
+
+<<>>=
+cat('-----------------\nNumber of crashes: ', nrow(animal), sep='')
+cat('-----------------\nNumber of intersection crashes: ', unname(table(animal$Intersection.Crash)['Yes']), " (", round(unname(table(animal$Intersection.Crash)['Yes'])*100/nrow(animal), 1), "%)", sep='')
+cat('-----------------\nNumber of casualty crashes: ', unname(table(animal$Crash.Severity)['CASUALTY CRASH']), " (", round(unname(table(animal$Crash.Severity)['CASUALTY CRASH'])*100/nrow(animal), 1), "%)", sep='')
+cat('-----------------\nTop 5 most common streets:')
+table(animal$Street.Full.Name)[order(table(animal$Street.Full.Name), decreasing = TRUE)][1:5]
+cat('-----------------\nAvg. victims per year: ', round(sum(animal$Total.Victims)/5), sep='')
+cat('-----------------\nMonths of the year:')
+table(animal$Month.Of.Year)
+cat('-----------------\nDays of the week:')
+table(animal$Day.Of.Week)
+cat('-----------------\nAvg. Temperature:')
+data.frame(
+  'Avg temp.' = mean(weatherdata$Temp...C., na.rm=TRUE),
+  'Avg crash temp.' = mean(alldata$Temp...C., na.rm = TRUE),
+  'Avg animal crash temp.' = mean(animal$Temp...C., na.rm = TRUE)
+)
+cat('-----------------\nAvg Relative Humidity:')
+data.frame(
+  'Avg humidity' = mean(weatherdata$'Rel.Hum....', na.rm=TRUE),
+  'Avg crash humidity' = mean(alldata$'Rel.Hum....', na.rm = TRUE),
+  'Avg animal crash humidity' = mean(animal$'Rel.Hum....', na.rm = TRUE)
+)
+cat('-----------------\nAvg. Precipitation Amount (mm):')
+data.frame(
+  'Avg precipitation' = mean(weatherdata$'Precip..Amount..mm.', na.rm=TRUE),
+  'Avg crash precipitation' = mean(alldata$'Precip..Amount..mm.', na.rm = TRUE),
+  'Avg animal crash precipitation' = mean(animal$'Precip..Amount..mm.', na.rm = TRUE)
+)
+cat('-----------------\nAvg. Wind Speed (km/h):')
+data.frame(
+  'Avg wind speed' = mean(weatherdata$'Wind.Spd..km.h.', na.rm=TRUE),
+  'Avg crash wind speed' = mean(alldata$'Wind.Spd..km.h.', na.rm = TRUE),
+  'Avg animal crash wind speed' = mean(animal$'Wind.Spd..km.h.', na.rm = TRUE)
+)
+cat('-----------------\nAvg. Visibility (km):')
+data.frame(
+  'Avg visibility' = mean(weatherdata$'Visibility..km.', na.rm=TRUE),
+  'Avg crash visibility' = mean(alldata$'Visibility..km.', na.rm = TRUE),
+  'Avg animal crash visibility' = mean(animal$'Visibility..km.', na.rm = TRUE)
+)
+rm(animal)
+@
 
 
 
 \pagebreak
 \subsection{Heavy Vehicle Crashes}
 
+<<>>=
+heavy = alldata[alldata$Heavy.Veh.Flag == 'Yes',]
+@
+
+<<>>=
+cat('-----------------\nNumber of crashes: ', nrow(heavy), sep='')
+cat('-----------------\nNumber of intersection crashes: ', unname(table(heavy$Intersection.Crash)['Yes']), " (", round(unname(table(heavy$Intersection.Crash)['Yes'])*100/nrow(heavy), 1), "%)", sep='')
+cat('-----------------\nNumber of casualty crashes: ', unname(table(heavy$Crash.Severity)['CASUALTY CRASH']), " (", round(unname(table(heavy$Crash.Severity)['CASUALTY CRASH'])*100/nrow(heavy), 1), "%)", sep='')
+cat('-----------------\nTop 5 most common streets:')
+table(heavy$Street.Full.Name)[order(table(heavy$Street.Full.Name), decreasing = TRUE)][1:5]
+cat('-----------------\nAvg. victims per year: ', round(sum(heavy$Total.Victims)/5), sep='')
+cat('-----------------\nMonths of the year:')
+table(heavy$Month.Of.Year)
+cat('-----------------\nDays of the week:')
+table(heavy$Day.Of.Week)
+cat('-----------------\nAvg. Temperature:')
+data.frame(
+  'Avg temp.' = mean(weatherdata$Temp...C., na.rm=TRUE),
+  'Avg crash temp.' = mean(alldata$Temp...C., na.rm = TRUE),
+  'Avg heavy crash temp.' = mean(heavy$Temp...C., na.rm = TRUE)
+)
+cat('-----------------\nAvg Relative Humidity:')
+data.frame(
+  'Avg humidity' = mean(weatherdata$'Rel.Hum....', na.rm=TRUE),
+  'Avg crash humidity' = mean(alldata$'Rel.Hum....', na.rm = TRUE),
+  'Avg heavy crash humidity' = mean(heavy$'Rel.Hum....', na.rm = TRUE)
+)
+cat('-----------------\nAvg. Precipitation Amount (mm):')
+data.frame(
+  'Avg precipitation' = mean(weatherdata$'Precip..Amount..mm.', na.rm=TRUE),
+  'Avg crash precipitation' = mean(alldata$'Precip..Amount..mm.', na.rm = TRUE),
+  'Avg heavy crash precipitation' = mean(heavy$'Precip..Amount..mm.', na.rm = TRUE)
+)
+cat('-----------------\nAvg. Wind Speed (km/h):')
+data.frame(
+  'Avg wind speed' = mean(weatherdata$'Wind.Spd..km.h.', na.rm=TRUE),
+  'Avg crash wind speed' = mean(alldata$'Wind.Spd..km.h.', na.rm = TRUE),
+  'Avg heavy crash wind speed' = mean(heavy$'Wind.Spd..km.h.', na.rm = TRUE)
+)
+cat('-----------------\nAvg. Visibility (km):')
+data.frame(
+  'Avg visibility' = mean(weatherdata$'Visibility..km.', na.rm=TRUE),
+  'Avg crash visibility' = mean(alldata$'Visibility..km.', na.rm = TRUE),
+  'Avg heavy crash visibility' = mean(heavy$'Visibility..km.', na.rm = TRUE)
+)
+rm(heavy)
+@
 
 
 
 \pagebreak
 \subsection{Motorcycle Crashes}
 
+<<>>=
+motorcycle = alldata[alldata$Motorcycle.Flag == 'Yes',]
+@
+
+<<>>=
+cat('-----------------\nNumber of crashes: ', nrow(motorcycle), sep='')
+cat('-----------------\nNumber of intersection crashes: ', unname(table(motorcycle$Intersection.Crash)['Yes']), " (", round(unname(table(motorcycle$Intersection.Crash)['Yes'])*100/nrow(motorcycle), 1), "%)", sep='')
+cat('-----------------\nNumber of casualty crashes: ', unname(table(motorcycle$Crash.Severity)['CASUALTY CRASH']), " (", round(unname(table(motorcycle$Crash.Severity)['CASUALTY CRASH'])*100/nrow(motorcycle), 1), "%)", sep='')
+cat('-----------------\nTop 5 most common streets:')
+table(motorcycle$Street.Full.Name)[order(table(motorcycle$Street.Full.Name), decreasing = TRUE)][1:5]
+cat('-----------------\nAvg. victims per year: ', round(sum(motorcycle$Total.Victims)/5), sep='')
+cat('-----------------\nMonths of the year:')
+table(motorcycle$Month.Of.Year)
+cat('-----------------\nDays of the week:')
+table(motorcycle$Day.Of.Week)
+cat('-----------------\nAvg. Temperature:')
+data.frame(
+  'Avg temp.' = mean(weatherdata$Temp...C., na.rm=TRUE),
+  'Avg crash temp.' = mean(alldata$Temp...C., na.rm = TRUE),
+  'Avg motorcycle crash temp.' = mean(motorcycle$Temp...C., na.rm = TRUE)
+)
+cat('-----------------\nAvg Relative Humidity:')
+data.frame(
+  'Avg humidity' = mean(weatherdata$'Rel.Hum....', na.rm=TRUE),
+  'Avg crash humidity' = mean(alldata$'Rel.Hum....', na.rm = TRUE),
+  'Avg motorcycle crash humidity' = mean(motorcycle$'Rel.Hum....', na.rm = TRUE)
+)
+cat('-----------------\nAvg. Precipitation Amount (mm):')
+data.frame(
+  'Avg precipitation' = mean(weatherdata$'Precip..Amount..mm.', na.rm=TRUE),
+  'Avg crash precipitation' = mean(alldata$'Precip..Amount..mm.', na.rm = TRUE),
+  'Avg motorcycle crash precipitation' = mean(motorcycle$'Precip..Amount..mm.', na.rm = TRUE)
+)
+cat('-----------------\nAvg. Wind Speed (km/h):')
+data.frame(
+  'Avg wind speed' = mean(weatherdata$'Wind.Spd..km.h.', na.rm=TRUE),
+  'Avg crash wind speed' = mean(alldata$'Wind.Spd..km.h.', na.rm = TRUE),
+  'Avg motorcycle crash wind speed' = mean(motorcycle$'Wind.Spd..km.h.', na.rm = TRUE)
+)
+cat('-----------------\nAvg. Visibility (km):')
+data.frame(
+  'Avg visibility' = mean(weatherdata$'Visibility..km.', na.rm=TRUE),
+  'Avg crash visibility' = mean(alldata$'Visibility..km.', na.rm = TRUE),
+  'Avg motorcycle crash visibility' = mean(motorcycle$'Visibility..km.', na.rm = TRUE)
+)
+rm(motorcycle)
+@
 
 
 
 \pagebreak
 \subsection{Parked Vehicle Crashes}
 
+<<>>=
+parked = alldata[alldata$Parked.Vehicle.Flag == 'Yes',]
+@
 
+<<>>=
+cat('-----------------\nNumber of crashes: ', nrow(parked), sep='')
+cat('-----------------\nNumber of intersection crashes: ', unname(table(parked$Intersection.Crash)['Yes']), " (", round(unname(table(parked$Intersection.Crash)['Yes'])*100/nrow(parked), 1), "%)", sep='')
+cat('-----------------\nNumber of casualty crashes: ', unname(table(parked$Crash.Severity)['CASUALTY CRASH']), " (", round(unname(table(parked$Crash.Severity)['CASUALTY CRASH'])*100/nrow(parked), 1), "%)", sep='')
+cat('-----------------\nTop 5 most common streets:')
+table(parked$Street.Full.Name)[order(table(parked$Street.Full.Name), decreasing = TRUE)][1:5]
+cat('-----------------\nAvg. victims per year: ', round(sum(parked$Total.Victims)/5), sep='')
+cat('-----------------\nMonths of the year:')
+table(parked$Month.Of.Year)
+cat('-----------------\nDays of the week:')
+table(parked$Day.Of.Week)
+cat('-----------------\nAvg. Temperature:')
+data.frame(
+  'Avg temp.' = mean(weatherdata$Temp...C., na.rm=TRUE),
+  'Avg crash temp.' = mean(alldata$Temp...C., na.rm = TRUE),
+  'Avg parked crash temp.' = mean(parked$Temp...C., na.rm = TRUE)
+)
+cat('-----------------\nAvg Relative Humidity:')
+data.frame(
+  'Avg humidity' = mean(weatherdata$'Rel.Hum....', na.rm=TRUE),
+  'Avg crash humidity' = mean(alldata$'Rel.Hum....', na.rm = TRUE),
+  'Avg parked crash humidity' = mean(parked$'Rel.Hum....', na.rm = TRUE)
+)
+cat('-----------------\nAvg. Precipitation Amount (mm):')
+data.frame(
+  'Avg precipitation' = mean(weatherdata$'Precip..Amount..mm.', na.rm=TRUE),
+  'Avg crash precipitation' = mean(alldata$'Precip..Amount..mm.', na.rm = TRUE),
+  'Avg parked crash precipitation' = mean(parked$'Precip..Amount..mm.', na.rm = TRUE)
+)
+cat('-----------------\nAvg. Wind Speed (km/h):')
+data.frame(
+  'Avg wind speed' = mean(weatherdata$'Wind.Spd..km.h.', na.rm=TRUE),
+  'Avg crash wind speed' = mean(alldata$'Wind.Spd..km.h.', na.rm = TRUE),
+  'Avg parked crash wind speed' = mean(parked$'Wind.Spd..km.h.', na.rm = TRUE)
+)
+cat('-----------------\nAvg. Visibility (km):')
+data.frame(
+  'Avg visibility' = mean(weatherdata$'Visibility..km.', na.rm=TRUE),
+  'Avg crash visibility' = mean(alldata$'Visibility..km.', na.rm = TRUE),
+  'Avg parked crash visibility' = mean(parked$'Visibility..km.', na.rm = TRUE)
+)
+rm(parked)
+@
 
 
 
 \pagebreak
 \subsection{Pedestrian Crashes}
 
+<<>>=
+pedestrian = alldata[alldata$Pedestrian.Flag == 'Yes',]
+@
 
+<<>>=
+cat('-----------------\nNumber of crashes: ', nrow(pedestrian), sep='')
+cat('-----------------\nNumber of intersection crashes: ', unname(table(pedestrian$Intersection.Crash)['Yes']), " (", round(unname(table(pedestrian$Intersection.Crash)['Yes'])*100/nrow(pedestrian), 1), "%)", sep='')
+cat('-----------------\nNumber of casualty crashes: ', unname(table(pedestrian$Crash.Severity)['CASUALTY CRASH']), " (", round(unname(table(pedestrian$Crash.Severity)['CASUALTY CRASH'])*100/nrow(pedestrian), 1), "%)", sep='')
+cat('-----------------\nTop 5 most common streets:')
+table(pedestrian$Street.Full.Name)[order(table(pedestrian$Street.Full.Name), decreasing = TRUE)][1:5]
+cat('-----------------\nAvg. victims per year: ', round(sum(pedestrian$Total.Victims)/5), sep='')
+cat('-----------------\nMonths of the year:')
+table(pedestrian$Month.Of.Year)
+cat('-----------------\nDays of the week:')
+table(pedestrian$Day.Of.Week)
+cat('-----------------\nAvg. Temperature:')
+data.frame(
+  'Avg temp.' = mean(weatherdata$Temp...C., na.rm=TRUE),
+  'Avg crash temp.' = mean(alldata$Temp...C., na.rm = TRUE),
+  'Avg pedestrian crash temp.' = mean(pedestrian$Temp...C., na.rm = TRUE)
+)
+cat('-----------------\nAvg Relative Humidity:')
+data.frame(
+  'Avg humidity' = mean(weatherdata$'Rel.Hum....', na.rm=TRUE),
+  'Avg crash humidity' = mean(alldata$'Rel.Hum....', na.rm = TRUE),
+  'Avg pedestrian crash humidity' = mean(pedestrian$'Rel.Hum....', na.rm = TRUE)
+)
+cat('-----------------\nAvg. Precipitation Amount (mm):')
+data.frame(
+  'Avg precipitation' = mean(weatherdata$'Precip..Amount..mm.', na.rm=TRUE),
+  'Avg crash precipitation' = mean(alldata$'Precip..Amount..mm.', na.rm = TRUE),
+  'Avg pedestrian crash precipitation' = mean(pedestrian$'Precip..Amount..mm.', na.rm = TRUE)
+)
+cat('-----------------\nAvg. Wind Speed (km/h):')
+data.frame(
+  'Avg wind speed' = mean(weatherdata$'Wind.Spd..km.h.', na.rm=TRUE),
+  'Avg crash wind speed' = mean(alldata$'Wind.Spd..km.h.', na.rm = TRUE),
+  'Avg pedestrian crash wind speed' = mean(pedestrian$'Wind.Spd..km.h.', na.rm = TRUE)
+)
+cat('-----------------\nAvg. Visibility (km):')
+data.frame(
+  'Avg visibility' = mean(weatherdata$'Visibility..km.', na.rm=TRUE),
+  'Avg crash visibility' = mean(alldata$'Visibility..km.', na.rm = TRUE),
+  'Avg pedestrian crash visibility' = mean(pedestrian$'Visibility..km.', na.rm = TRUE)
+)
+rm(pedestrian)
+@
 
 
 
@@ -456,9 +791,13 @@ alldata %>%
 
 
 \pagebreak
-\section{}
+\section{Neural Network Dataset}
+
+As opposed to linking the weather to each crash, this dataset links (some) crash data to the weather on each individual day (ie. the reverse). This is desirable if we want to predict the \# of crashes and \# of victims per day based on weather conditions. 
 
 
+* crashes, num of victims, parked flag, street name (may need to group)
+all are: per weekday in each month (ex. fridays in october)
 
 
 
