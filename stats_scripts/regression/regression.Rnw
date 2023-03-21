@@ -1,0 +1,180 @@
+\documentclass[11pt, a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry} %Sets proper 1-inch margins. 
+\usepackage{amsmath} %Only load this if you are using math/equations.
+\usepackage{graphicx} %Only need to call this if inserting images.
+\usepackage{caption} %Only need to call this if inserting captions.
+\usepackage{float} %Allows the use of the [H] specifier. 
+\usepackage[colorlinks,citecolor=blue,linkcolor=blue,urlcolor=blue]{hyperref} %Allows for the embedding of urls. 
+\usepackage{setspace}
+\usepackage{blindtext}
+
+\pagenumbering{arabic}
+
+\usepackage{fancyhdr}
+
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{Jonah Edmundson \\ 2023}
+\lhead{\thepage}
+
+\newcommand{\comment}[1]{}
+
+\begin{document}
+\SweaveOpts{concordance=TRUE, echo=FALSE}
+
+\begin{center}
+\Large{\textsc{Regression Analysis}}
+\par
+\normalsize{\textsc{for}}
+\par
+\large{\textsc{Kelowna Weather-Crash Project}}
+\end{center}
+
+
+\vspace{0.917 pc} %Creates a paragraph line break. 
+
+\tableofcontents
+
+
+
+\pagebreak
+\section{Predicting Number of Crashes}
+
+<<>>=
+load_first_object <- function(fname){
+  #this function was written by Dr. Rhonda Rosychuk at the U of A
+  e <- new.env(parent = parent.frame())
+  load(fname, e)
+  return(e[[ls(e)[1]]])
+}
+
+#cleaned and combined
+regdata = load_first_object("../../rda_files/reg_data.rda")
+@
+
+
+\subsection{Multiple Linear Regression}
+
+<<fig=FALSE>>=
+crash.lm = lm(crashes~month+day+temp+relhum+precip+wind.dir+wind.spd+visibility+pressure, data=regdata, x = TRUE, y = TRUE)
+#summary(crash.lm)
+crash.step = step(crash.lm, trace=0, direction = 'forward')
+summary(crash.step)
+#car::vif(crash.step)
+@
+
+
+<<results=hide>>=
+library(np)
+isa = is
+#supress printing
+quiet <- function(x) { 
+  sink(tempfile()) 
+  on.exit(sink()) 
+  invisible(force(x)) 
+}
+@
+
+
+<<>>=
+X = with(regdata,data.frame(month,day,temp,relhum,precip,wind.dir,wind.spd,visibility,pressure))
+np.test = quiet(with(regdata, npcmstest(model = crash.step, xdat = X, ydat = crashes)))
+np.test
+@
+
+
+
+
+\pagebreak
+\subsection{Generalized Linear Model}
+
+<<fig=TRUE>>=
+plot(density(regdata$crashes), main='', xlab='Num. of Crashes per Day')
+x = seq(0, 300, length=5000)
+lines(x, dnorm(x, mean=mean(regdata$crashes), sd = sd(regdata$crashes)), type="l", col=2)
+crashes.glm = glm(crashes~month+day+temp+relhum+precip+wind.dir+wind.spd+visibility+pressure, data=regdata, 
+                family = gaussian(link='identity'))
+summary(crashes.glm)
+@
+
+
+
+\pagebreak
+\subsection{Non-parametric Approach}
+
+<<>>=
+#library(np)
+#
+@
+
+
+
+
+\pagebreak
+\section{Decision Tree}
+
+<<>>=
+#
+@
+
+
+
+
+\pagebreak
+\subsection{Random Forest}
+
+<<>>=
+#
+@
+
+
+
+
+
+
+
+
+
+\pagebreak
+\section{Predicting Number of Victims}
+
+\subsection{Multiple Linear Regression}
+
+<<>>=
+#
+@
+
+
+
+
+
+
+
+
+
+
+
+
+
+\pagebreak
+\section{Answering Hypotheses}
+
+
+1. Visibility on a given day will be inversely correlated with \# of crashes per day.
+
+2. Temperature will have a weak correlation with \# of crashes per day (people drive more recklessly in the summer? also tourism = more traffic in summer). 
+
+3. Precipitation will be correlated with \# of crashes per day. 
+
+4. Summer will have more crashes involving cyclists and motorcyclists. 
+
+5. Crash fatality will be higher on weekends when more people are driving under the influence. 
+
+6. Fatal, more severe crashes occur proportionately more often at nighttime, as visibility is reduced due to lack of sunlight. 
+
+8. Single-vehicle crashes should be more proportionally higher during adverse weather, especially snow/ice conditions. 
+
+
+
+\end{document}

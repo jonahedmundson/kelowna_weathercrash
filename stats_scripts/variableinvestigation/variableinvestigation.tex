@@ -110,13 +110,13 @@ Summary of all variables:
  Max.   :3.000   Max.   :9.0000   Max.   : 37.73   Max.   :100.00  
                                   NA's   :35       NA's   :35      
  Precip..Amount..mm. Wind.Dir..10s.deg. Wind.Spd..km.h.  Visibility..km.
- Min.   :0.00000     Min.   : 1.00      Min.   : 0.000   Min.   : 0.20  
- 1st Qu.:0.00000     1st Qu.:15.67      1st Qu.: 4.667   1st Qu.:16.10  
- Median :0.00000     Median :19.50      Median : 8.000   Median :16.10  
- Mean   :0.03111     Mean   :21.16      Mean   :10.277   Mean   :15.15  
- 3rd Qu.:0.00000     3rd Qu.:31.00      3rd Qu.:13.667   3rd Qu.:16.10  
- Max.   :4.00000     Max.   :36.00      Max.   :51.333   Max.   :16.10  
- NA's   :35          NA's   :4020       NA's   :35       NA's   :36     
+ Min.   : 0.00000    Min.   : 1.00      Min.   : 0.000   Min.   : 0.20  
+ 1st Qu.: 0.00000    1st Qu.:15.67      1st Qu.: 4.667   1st Qu.:16.10  
+ Median : 0.00000    Median :19.50      Median : 8.000   Median :16.10  
+ Mean   : 0.09327    Mean   :21.16      Mean   :10.277   Mean   :15.15  
+ 3rd Qu.: 0.00000    3rd Qu.:31.00      3rd Qu.:13.667   3rd Qu.:16.10  
+ Max.   :12.00000    Max.   :36.00      Max.   :51.333   Max.   :16.10  
+                     NA's   :4020       NA's   :35       NA's   :36     
  Stn.Press..kPa. Fog       Freezing.Rain Snow      Rain      Thunderstorms
  Min.   :94.08   0:52106   0:56134       0:52325   0:50075   0:56002      
  1st Qu.:96.10   1: 4030   1:    2       1: 3811   1: 6061   1:  134      
@@ -232,14 +232,14 @@ SEPTEMBER   OCTOBER  NOVEMBER  DECEMBER
 \begin{Schunk}
 \begin{Soutput}
   Avg.precipitation Avg.crash.precipitation
-1        0.02998858              0.03110818
+1        0.08996575              0.09326635
 \end{Soutput}
 \begin{Soutput}
 Rounded table of precipitation values:
 \end{Soutput}
 \begin{Soutput}
-    0     1     2     3     4 
-54934  1105    54     1     7 
+    0     1     2     3     4     5     6     7     8    12 
+53658  1174   781   263   206    11    34     1     1     7 
 \end{Soutput}
 \begin{Soutput}
 Many are 0...
@@ -385,7 +385,7 @@ Avg. Precipitation Amount (mm): (same as above)
 \end{Soutput}
 \begin{Soutput}
   Avg.precipitation Avg.crash.precipitation
-1        0.02998858              0.03110818
+1        0.08996575              0.09326635
 \end{Soutput}
 \begin{Soutput}
 -----------------
@@ -402,6 +402,14 @@ Avg. Visibility (km): (same as above)
 \begin{Soutput}
   Avg.visibility Avg.crash.visibility
 1       15.10429             15.14964
+\end{Soutput}
+\begin{Soutput}
+-----------------
+Top 5 Most Common Crash Types:
+\end{Soutput}
+\begin{Soutput}
+      REAR END SINGLE VEHICLE   UNDETERMINED    SIDE IMPACT     CONFLICTED 
+         13024          12495          11453          11369           3068 
 \end{Soutput}
 \end{Schunk}
 
@@ -477,7 +485,7 @@ Avg. Precipitation Amount (mm):
 \end{Soutput}
 \begin{Soutput}
   Avg.precipitation Avg.crash.precipitation Avg.cyclist.crash.precipitation
-1        0.02998858              0.03110818                      0.02715447
+1        0.02998858               0.2797991                      0.08126521
 \end{Soutput}
 \begin{Soutput}
 -----------------
@@ -571,7 +579,7 @@ Avg. Precipitation Amount (mm):
 \end{Soutput}
 \begin{Soutput}
   Avg.precipitation Avg.crash.precipitation Avg.animal.crash.precipitation
-1        0.02998858              0.03110818                     0.02688812
+1        0.08996575              0.09326635                     0.08062438
 \end{Soutput}
 \begin{Soutput}
 -----------------
@@ -662,7 +670,7 @@ Avg. Precipitation Amount (mm):
 \end{Soutput}
 \begin{Soutput}
   Avg.precipitation Avg.crash.precipitation Avg.heavy.crash.precipitation
-1        0.02998858              0.03110818                    0.03264974
+1        0.08996575              0.09326635                    0.09780595
 \end{Soutput}
 \begin{Soutput}
 -----------------
@@ -753,7 +761,7 @@ Avg. Precipitation Amount (mm):
 \end{Soutput}
 \begin{Soutput}
   Avg.precipitation Avg.crash.precipitation Avg.motorcycle.crash.precipitation
-1        0.02998858              0.03110818                         0.02541397
+1        0.08996575              0.09326635                          0.0762419
 \end{Soutput}
 \begin{Soutput}
 -----------------
@@ -844,7 +852,7 @@ Avg. Precipitation Amount (mm):
 \end{Soutput}
 \begin{Soutput}
   Avg.precipitation Avg.crash.precipitation Avg.parked.crash.precipitation
-1        0.02998858              0.03110818                     0.02897205
+1        0.08996575              0.09326635                     0.08685184
 \end{Soutput}
 \begin{Soutput}
 -----------------
@@ -935,7 +943,7 @@ Avg. Precipitation Amount (mm):
 \end{Soutput}
 \begin{Soutput}
   Avg.precipitation Avg.crash.precipitation Avg.pedestrian.crash.precipitation
-1        0.02998858              0.03110818                         0.03121387
+1        0.08996575              0.09326635                         0.09364162
 \end{Soutput}
 \begin{Soutput}
 -----------------
@@ -964,9 +972,113 @@ Avg. Visibility (km):
 
 
 \pagebreak
-\section{}
+\section{Regression/Neural Network Dataset}
+
+As opposed to linking the weather to each crash, this dataset links (some) crash data to the weather on each individual day (ie. the reverse). This is desirable if we want to predict the \# of crashes and \# of victims per day based on weather conditions. 
 
 
+Notice that rows are a bit weird/unintuitive for this dataset. Each row is a unique weekday in each month, and so actually represents the sum of all of these weekdays (ex. Fridays in October, Mondays in December, etc.). This is the case because the crash dataset was anonymized. 
+
+\begin{Schunk}
+\begin{Soutput}
+Variables:
+\end{Soutput}
+\begin{Soutput}
+ [1] "linker"     "month"      "day"        "temp"       "relhum"    
+ [6] "precip"     "wind.dir"   "wind.spd"   "visibility" "pressure"  
+[11] "crashes"    "victims"    "parked"     "HWY97"      "HARVEY"    
+[16] "HWY33"      "GORDON"    
+\end{Soutput}
+\end{Schunk}
+\includegraphics{variableinvestigation-034}
+
+
+
+\pagebreak
+\subsection{Weather Variables}
+
+\subsubsection{Temperature}
+
+\includegraphics{variableinvestigation-035}
+
+
+\subsubsection{Relative Humidity}
+
+\includegraphics{variableinvestigation-036}
+
+
+\subsubsection{Precipitation}
+
+\includegraphics{variableinvestigation-037}
+
+
+\subsubsection{Wind Direction}
+
+\includegraphics{variableinvestigation-038}
+
+
+\subsubsection{Wind Speed}
+
+\includegraphics{variableinvestigation-039}
+
+
+
+\subsubsection{Visibility}
+
+\includegraphics{variableinvestigation-040}
+
+
+
+\subsubsection{Air Pressure}
+
+\includegraphics{variableinvestigation-041}
+
+
+
+
+\pagebreak
+\subsection{Crash Variables}
+
+\subsubsection{Number of Crashes}
+
+\begin{Schunk}
+\begin{Soutput}
+Row with abnormally high number of crashes:
+\end{Soutput}
+\begin{Soutput}
+                   linker    month      day     temp relhum precip wind.dir
+72 2017 NOVEMBER THURSDAY NOVEMBER THURSDAY 3.244167   88.5   18.7 19.20085
+   wind.spd visibility pressure crashes victims parked HWY97 HARVEY HWY33
+72 11.43333   13.09917 95.80075     326     147     70    33     10    21
+   GORDON
+72     14
+\end{Soutput}
+\end{Schunk}
+\includegraphics{variableinvestigation-042}
+
+
+\pagebreak
+\subsubsection{Number of Deaths}
+
+\begin{Schunk}
+\begin{Soutput}
+Row with abnormally high number of deaths:
+\end{Soutput}
+\begin{Soutput}
+                   linker    month      day     temp relhum precip wind.dir
+72 2017 NOVEMBER THURSDAY NOVEMBER THURSDAY 3.244167   88.5   18.7 19.20085
+   wind.spd visibility pressure crashes victims parked HWY97 HARVEY HWY33
+72 11.43333   13.09917 95.80075     326     147     70    33     10    21
+   GORDON
+72     14
+\end{Soutput}
+\end{Schunk}
+\includegraphics{variableinvestigation-043}
+
+
+\subsubsection{Locations}
+
+\includegraphics{variableinvestigation-044}
 
 
 

@@ -138,7 +138,7 @@ Relevant file: [Data Cleaning](./stats_scripts/datacleaning/datacleaning.pdf).
 Relevant file: [Variable Exploration](./stats_scripts/variableinvestigation/variableinvestigation.pdf).
 
 
-## Linear Modelling
+## Regression 
 
 Relevant file: [TBA](./NULL).
 
