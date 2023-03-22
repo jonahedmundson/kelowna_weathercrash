@@ -1,6 +1,26 @@
 \contentsline {section}{\numberline {1}Predicting Number of Crashes}{2}{section.1}%
-\contentsline {subsection}{\numberline {1.1}Simple Linear Regression}{2}{subsection.1.1}%
-\contentsline {subsection}{\numberline {1.2}Generalized Linear Model}{3}{subsection.1.2}%
-\contentsline {subsection}{\numberline {1.3}Non-parametric Approach}{5}{subsection.1.3}%
-\contentsline {subsection}{\numberline {1.4}Random Forest}{6}{subsection.1.4}%
-\contentsline {section}{\numberline {2}Answering Hypotheses}{7}{section.2}%
+\contentsline {subsection}{\numberline {1.1}Multiple Linear Regression}{2}{subsection.1.1}%
+\contentsline {subsection}{\numberline {1.2}MLR Outliers Removed}{5}{subsection.1.2}%
+\contentsline {subsection}{\numberline {1.3}LASSO Variable Selection}{8}{subsection.1.3}%
+\contentsline {subsection}{\numberline {1.4}Generalized Linear Model}{10}{subsection.1.4}%
+\contentsline {subsection}{\numberline {1.5}Non-parametric Approach}{12}{subsection.1.5}%
+\contentsline {subsection}{\numberline {1.6}Decision Tree}{14}{subsection.1.6}%
+\contentsline {subsection}{\numberline {1.7}Random Forest}{16}{subsection.1.7}%
+\contentsline {subsection}{\numberline {1.8}Boosting}{17}{subsection.1.8}%
+\contentsline {subsection}{\numberline {1.9}Regression Summary}{18}{subsection.1.9}%
+\contentsline {section}{\numberline {2}Predicting Number of Victims}{19}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Multiple Linear Regression}{19}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Generalized Linear Model}{21}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Non-parametric Approach}{23}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.4}Decision Tree}{25}{subsection.2.4}%
+\contentsline {subsection}{\numberline {2.5}Random Forest}{27}{subsection.2.5}%
+\contentsline {subsection}{\numberline {2.6}Boosting}{28}{subsection.2.6}%
+\contentsline {subsection}{\numberline {2.7}Regression Summary}{29}{subsection.2.7}%
+\contentsline {section}{\numberline {3}Answering Hypotheses}{30}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Visibility on a given day will be inversely correlated with \# of crashes per day.}{30}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Temperature will have a weak correlation with \# of crashes per day (people drive more recklessly in the summer? also tourism = more traffic in summer).}{31}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Precipitation will be correlated with \# of crashes per day.}{32}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}Summer will have more crashes involving cyclists and motorcyclists.}{33}{subsection.3.4}%
+\contentsline {subsection}{\numberline {3.5}Crash fatality will be higher on weekends when more people are driving under the influence.}{34}{subsection.3.5}%
+\contentsline {subsection}{\numberline {3.6}Fatal, more severe crashes occur proportionately more often at nighttime, as visibility is reduced due to lack of sunlight.}{35}{subsection.3.6}%
+\contentsline {subsection}{\numberline {3.7}Single-vehicle crashes should be more proportionally higher during adverse weather, especially snow/ice conditions.}{36}{subsection.3.7}%

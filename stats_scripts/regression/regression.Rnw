@@ -53,16 +53,43 @@ load_first_object <- function(fname){
 regdata = load_first_object("../../rda_files/reg_data.rda")
 @
 
+<<>>=
+#setting train and test
+set.seed(2023)
+regdata$year = as.numeric(substr(regdata$linker, 1, 4))
+train = regdata[regdata$year < 2021,]
+test = regdata[regdata$year == 2021,]
+@
+
+
 
 \subsection{Multiple Linear Regression}
 
 <<fig=FALSE>>=
-crash.lm = lm(crashes~month+day+temp+relhum+precip+wind.dir+wind.spd+visibility+pressure, data=regdata, x = TRUE, y = TRUE)
+crash.lm = lm(crashes~month+day+temp+relhum+precip+wind.dir+wind.spd+visibility+pressure, data=train, x = TRUE, y = TRUE)
 #summary(crash.lm)
-crash.step = step(crash.lm, trace=0, direction = 'forward')
+crash.step = step(crash.lm, trace=0, direction = 'both')
+cat('With backwards and forward selection using \'step()\':')
 summary(crash.step)
 #car::vif(crash.step)
 @
+
+<<fig=TRUE>>=
+#calculating MSE
+crash.pred = predict(crash.step, newdata = test, class = 'response')
+cat('MLR MSE:', mean((crash.pred-test$crashes)^2))
+
+#plotting fit
+plot(density(train$crashes), main='', xlab='Num. of Crashes per Day', ylim=c(0, 0.016), lwd=2)
+lines(density(test$crashes), col=2, lwd=2)
+lines(density(crash.pred), col=3, lwd=2)
+legend("topright", 
+       legend = c("Training Data", "Testing Data", "MLR w/ Step"),
+       col = 1:3,
+       lty = 1, lwd=2
+)
+@
+
 
 
 <<results=hide>>=
@@ -78,10 +105,141 @@ quiet <- function(x) {
 
 
 <<>>=
-X = with(regdata,data.frame(month,day,temp,relhum,precip,wind.dir,wind.spd,visibility,pressure))
-np.test = quiet(with(regdata, npcmstest(model = crash.step, xdat = X, ydat = crashes)))
+#X = with(train,data.frame(month,day,temp,relhum,precip,wind.dir,wind.spd,visibility,pressure))
+#np.test = quiet(with(train, npcmstest(model = crash.step, xdat = X, ydat = crashes)))
+np.test = load_first_object('./MLR_nptest.Rdata')
 np.test
 @
+
+\pagebreak
+
+\noindent\textbf{MLR Model Diagnostics:}
+
+<<fig=TRUE>>=
+par(mfrow=c(2,2))
+plot(crash.step)
+par(mfrow=c(1,1))
+@
+
+<<>>=
+cat('Point 72:')
+train[72,]
+@
+
+
+
+
+\pagebreak
+\subsection{MLR Outliers Removed}
+
+<<>>=
+train = train[-72,]
+row.names(train) = 1:nrow(train)
+@
+
+
+<<fig=FALSE>>=
+crash.lm = lm(crashes~month+day+temp+relhum+precip+wind.dir+wind.spd+visibility+pressure, data=train, x = TRUE, y = TRUE)
+#summary(crash.lm)
+crash.step = step(crash.lm, trace=0, direction = 'both')
+cat('With backwards and forward selection using \'step()\':')
+summary(crash.step)
+#car::vif(crash.step)
+@
+
+<<fig=TRUE>>=
+#calculating MSE
+crash.pred = predict(crash.step, newdata = test, class = 'response')
+mlr.mse = mean((crash.pred-test$crashes)^2)
+cat('MLR MSE:', mlr.mse)
+
+#plotting fit
+plot(density(train$crashes), main='', xlab='Num. of Crashes per Day', ylim=c(0, 0.016), lwd=2)
+lines(density(test$crashes), col=2, lwd=2)
+lines(density(crash.pred), col=3, lwd=2)
+legend("topright", 
+       legend = c("Training Data", "Testing Data", "MLR w/ Step"),
+       col = 1:3,
+       lty = 1, lwd=2
+)
+@
+
+
+
+<<results=hide>>=
+library(np)
+isa = is
+#supress printing
+quiet <- function(x) { 
+  sink(tempfile()) 
+  on.exit(sink()) 
+  invisible(force(x)) 
+}
+@
+
+
+<<>>=
+#X = with(train,data.frame(month,day,temp,relhum,precip,wind.dir,wind.spd,visibility,pressure))
+#np.test = quiet(with(train, npcmstest(model = crash.step, xdat = X, ydat = crashes)))
+#save(np.test, file='./MLR_nptest_no.Rdata')
+np.test = load_first_object('./MLR_nptest_no.Rdata')
+np.test
+@
+
+
+\pagebreak
+\noindent\textbf{MLR Model Diagnostics:}
+
+<<fig=TRUE>>=
+par(mfrow=c(2,2))
+plot(crash.step)
+par(mfrow=c(1,1))
+@
+
+
+
+
+
+
+\pagebreak
+\subsection{LASSO Variable Selection}
+%\noindent\textbf{LASSO Variable Selection}
+
+<<fig=TRUE>>=
+library(glmnet)
+grid <- exp(seq(5, -10, length=100))
+lm.lasso <- cv.glmnet(data.matrix(train[,c('month','day','temp','relhum','precip','wind.dir','wind.spd','visibility','pressure')]), train[,"crashes"], alpha=1, lambda=grid, standardize = TRUE)
+plot(lm.lasso$glmnet.fit, label=TRUE, xvar="lambda")
+#plot(lm.lasso)
+@
+
+
+<<fig=TRUE>>=
+#actually fitting model
+lammin = lm.lasso$lambda.min
+lm.lasso2 = glmnet(data.matrix(train[,c('month','day','temp','relhum','precip','wind.dir','wind.spd','visibility','pressure')]), train[,"crashes"], alpha = 1, lambda=lammin)
+cat('Value of lambda that results in the lowest MSE:', lammin)
+coef(lm.lasso2)
+
+#calculating MSE
+lasso.pred = predict(lm.lasso2, newx = data.matrix(test[,c('month','day','temp','relhum','precip','wind.dir','wind.spd','visibility','pressure')]))
+lasso.mse = mean((lasso.pred-test$crashes)^2)
+cat('MLR w/ LASSO MSE:', lasso.mse)
+
+#plotting fit
+plot(density(train$crashes), main='', xlab='Num. of Crashes per Day', ylim=c(0, 0.016), lwd=2)
+lines(density(test$crashes), col=2, lwd=2)
+lines(density(crash.pred), col=3, lwd=2)
+lines(density(lasso.pred), col=4, lwd=2)
+legend("topright", 
+       legend = c("Training Data", "Testing Data", "MLR w/ Step", "MLR w/ LASSO"),
+       col = 1:4,
+       lty = 1, lwd=2
+)
+@
+
+
+This is clearly a terrible fit.....
 
 
 
@@ -89,34 +247,108 @@ np.test
 \pagebreak
 \subsection{Generalized Linear Model}
 
-<<fig=TRUE>>=
-plot(density(regdata$crashes), main='', xlab='Num. of Crashes per Day')
+<<fig=FALSE, eval=FALSE>>=
+plot(density(train$crashes), main='', xlab='Num. of Crashes per Day')
 x = seq(0, 300, length=5000)
-lines(x, dnorm(x, mean=mean(regdata$crashes), sd = sd(regdata$crashes)), type="l", col=2)
-crashes.glm = glm(crashes~month+day+temp+relhum+precip+wind.dir+wind.spd+visibility+pressure, data=regdata, 
+lines(x, dnorm(x, mean=mean(train$crashes), sd = sd(train$crashes)), type="l", col=2)
+@
+
+<<>>=
+crashes.glm = glm(crashes~month+day+temp+relhum+precip+wind.dir+wind.spd+visibility+pressure, data=train, 
                 family = gaussian(link='identity'))
 summary(crashes.glm)
 @
+
+
+<<fig=TRUE>>=
+#calculating MSE
+glm.pred = predict(crashes.glm, newdata = test, class = 'response')
+glm.mse = mean((glm.pred-test$crashes)^2)
+cat('GLM MSE:', glm.mse)
+
+#plotting fit
+plot(density(train$crashes), main='', xlab='Num. of Crashes per Day', ylim=c(0, 0.016), lwd=2)
+lines(density(test$crashes), col=2, lwd=2)
+lines(density(crash.pred), col=3, lwd=2)
+lines(density(glm.pred), col=4, lwd=2)
+legend("topright", 
+       legend = c("Training Data", "Testing Data", "MLR w/ Step", "GLM Predicted"),
+       col = 1:4,
+       lty = 1, lwd=2
+)
+@
+
+
 
 
 
 \pagebreak
 \subsection{Non-parametric Approach}
 
-<<>>=
-#library(np)
-#
+<<fig=TRUE>>=
+#nonp = npreg(crashes~month+day+temp+relhum+precip+wind.dir+wind.spd+visibility+pressure, data=train, regtype="ll", bwmethod="cv.aic")
+#save(nonp, file='./nonpreg_no.Rdata')
+nonp = load_first_object('./nonpreg_no.Rdata')
+#nonp.test = npsigtest(nonp)
+#save(nonp.test, file='./nonp_sigtest_no.Rdata')
+nonp.test = load_first_object('./nonp_sigtest_no.Rdata')
+nonp.test
+nonp.pred = predict(nonp, newdata = test, class = 'response')
+np.mse = mean((nonp.pred-test$crashes)^2)
+cat('Non-parametric MSE:', np.mse)
+
+#plotting fit
+plot(density(train$crashes), main='', xlab='Num. of Crashes per Day', ylim=c(0, 0.016), lwd=2)
+lines(density(test$crashes), col=2, lwd=2)
+lines(density(nonp.pred), col=7, lwd=2)
+legend("topright", 
+       legend = c("Training Data", "Testing Data", "Non-parametric"),
+       col = c(1,2,7),
+       lty = 1, lwd=2
+)
 @
 
 
 
 
 \pagebreak
-\section{Decision Tree}
+\subsection{Decision Tree}
 
-<<>>=
-#
+<<fig=TRUE>>=
+library(tree)
+crash.tree = tree(crashes~month+day+temp+relhum+precip+wind.dir+wind.spd+visibility+pressure, data=train)
+plot(crash.tree)
+text(crash.tree, pretty=0, cex=0.5)
+summary(crash.tree)
 @
+
+
+<<fig=TRUE, eval=FALSE>>=
+#cut tree at 3 nodes
+crash.cv = cv.tree(crash.tree, FUN = prune.tree)
+plot(crash.cv, type="b")
+crash.pruned = prune.tree(crash.tree, best=3)
+summary(crash.pruned)
+#plot(q1.pruned)
+#text(q1.pruned, pretty = 0)
+@
+
+<<fig=TRUE>>=
+tree.pred = predict(crash.tree, newdata=test, type='vector')
+tree.mse = mean((tree.pred-test$crashes)^2)
+cat('Decision Tree MSE:', tree.mse)
+
+#plotting fit
+plot(density(train$crashes), main='', xlab='Num. of Crashes per Day', ylim=c(0, 0.016), lwd=2)
+lines(density(test$crashes), col=2, lwd=2)
+lines(density(tree.pred), col=4, lwd=2)
+legend("topright", 
+       legend = c("Training Data", "Testing Data", "Decision Tree"),
+       col = c(1,2,4),
+       lty = 1, lwd=2
+)
+@
+
 
 
 
@@ -125,8 +357,88 @@ summary(crashes.glm)
 \subsection{Random Forest}
 
 <<>>=
-#
+library(randomForest)
+crash.rf = randomForest(crashes~month+day+temp+relhum+precip+wind.dir+wind.spd+visibility+pressure, data=train, importance=TRUE)
+crash.rf
 @
+
+
+<<fig=TRUE>>=
+rf.pred = predict(crash.rf, newdata=test)
+rf.mse = mean((rf.pred-test$crashes)^2)
+cat('Random Forest MSE:', rf.mse)
+
+#plotting fit
+plot(density(train$crashes), main='', xlab='Num. of Crashes per Day', ylim=c(0, 0.016), lwd=2)
+lines(density(test$crashes), col=2, lwd=2)
+lines(density(tree.pred), col=4, lwd=2)
+lines(density(rf.pred), col=7, lwd=2)
+legend("topright", 
+       legend = c("Training Data", "Testing Data", "Decision Tree", "Random Forest"),
+       col = c(1,2,4,7),
+       lty = 1, lwd=2
+)
+@
+
+
+
+
+
+\pagebreak
+\subsection{Boosting}
+
+<<>>=
+library(gbm)
+crash.boost = gbm(crashes~month+day+temp+relhum+precip+wind.dir+wind.spd+visibility+pressure, 
+                 data=train, n.trees=5000, interaction.depth=1, cv.folds=5)
+summary(crash.boost, las=1)
+@
+
+<<fig=TRUE>>=
+boost.pred = predict(crash.boost, newdata=test)
+boost.mse = mean((boost.pred-test$crashes)^2)
+cat('Boosting MSE:', boost.mse)
+
+#plotting fit
+plot(density(train$crashes), main='', xlab='Num. of Crashes per Day', ylim=c(0, 0.016), lwd=2)
+lines(density(test$crashes), col=2, lwd=2)
+lines(density(boost.pred), col=4, lwd=2)
+legend("topright", 
+       legend = c("Training Data", "Testing Data", "Boosting"),
+       col = c(1,2,4),
+       lty = 1, lwd=2
+)
+@
+
+
+
+
+
+
+
+\pagebreak
+\subsection{Regression Summary}
+
+
+<<eval=TRUE>>=
+#table summarizing all MSEs
+cat('All model MSEs:')
+all.mses = data.frame(
+  'MLR' = mlr.mse,
+  'GLM' = glm.mse,
+  'NP' = np.mse,
+  'Tree' = tree.mse,
+  'RF' = rf.mse,
+  'Boosting' = boost.mse
+)
+row.names(all.mses) = ''
+all.mses
+@
+
+
+\vspace{6pc}
+
+Winner: GLM!
 
 
 
@@ -141,13 +453,280 @@ summary(crashes.glm)
 
 \subsection{Multiple Linear Regression}
 
+<<fig=FALSE>>=
+victim.lm = lm(victims~month+day+temp+relhum+precip+wind.dir+wind.spd+visibility+pressure, data=train, x = TRUE, y = TRUE)
+#summary(victim.lm)
+victim.step = step(victim.lm, trace=0, direction = 'both')
+summary(victim.step)
+#car::vif(victim.step)
+@
+
+<<fig=TRUE>>=
+#calculating MSE
+victim.pred = predict(victim.step, newdata = test, class = 'response')
+mlr.mse = mean((victim.pred-test$victims)^2)
+cat('MLR MSE:', mlr.mse)
+
+#plotting fit
+plot(density(train$victims), main='', xlab='Num. of victims per Day', ylim=c(0, 0.045), lwd=2)
+lines(density(test$victims), col=2, lwd=2)
+lines(density(victim.pred), col=3, lwd=2)
+legend("topright", 
+       legend = c("Training Data", "Testing Data", "MLR Predicted"),
+       col = 1:3,
+       lty = 1, lwd=2
+)
+@
+
+
+
 <<>>=
-#
+#X = with(train,data.frame(month,day,temp,relhum,precip,wind.dir,wind.spd,visibility,pressure))
+#np.test = quiet(with(train, npcmstest(model = victim.step, xdat = X, ydat = victims)))
+np.test = load_first_object('./MLR_nptest.Rdata')
+np.test
 @
 
 
 
 
+\pagebreak
+\subsection{Generalized Linear Model}
+
+<<fig=FALSE, eval=FALSE>>=
+plot(density(train$victims), main='', xlab='Num. of victims per Day')
+x = seq(0, 300, length=5000)
+lines(x, dnorm(x, mean=mean(train$victims), sd = sd(train$victims)), type="l", col=2)
+@
+
+<<>>=
+victims.glm = glm(victims~month+day+temp+relhum+precip+wind.dir+wind.spd+visibility+pressure, data=train, 
+                family = gaussian(link='identity'))
+summary(victims.glm)
+@
+
+
+<<fig=TRUE>>=
+#calculating MSE
+glm.pred = predict(victims.glm, newdata = test, class = 'response')
+glm.mse = mean((glm.pred-test$victims)^2)
+cat('GLM MSE:', glm.mse)
+
+#plotting fit
+plot(density(train$victims), main='', xlab='Num. of victims per Day', ylim=c(0, 0.045), lwd=2)
+lines(density(test$victims), col=2, lwd=2)
+lines(density(victim.pred), col=3, lwd=2)
+lines(density(glm.pred), col=4, lwd=2)
+legend("topright", 
+       legend = c("Training Data", "Testing Data", "MLR Predicted", "GLM Predicted"),
+       col = 1:4,
+       lty = 1, lwd=2
+)
+@
+
+
+
+
+
+\pagebreak
+\subsection{Non-parametric Approach}
+
+<<fig=TRUE>>=
+#nonp.victims = npreg(victims~month+day+temp+relhum+precip+wind.dir+wind.spd+visibility+pressure, data=train, regtype="ll", bwmethod="cv.aic")
+#save(nonp.victims, file='./nonpreg_victims.Rdata')
+nonp.victims = load_first_object('./nonpreg_victims.Rdata')
+#nonp.sigtest.victims = npsigtest(nonp)
+#save(nonp.sigtest.victims, file='./nonp_sigtest_victims.Rdata')
+nonp.test.victims = load_first_object('./nonp_sigtest_victims.Rdata')
+nonp.test.victims
+nonp.pred.victims = predict(nonp.victims, newdata = test, class = 'response')
+np.mse = mean((nonp.pred.victims-test$victims)^2)
+cat('Non-parametric MSE:', np.mse)
+
+#plotting fit
+plot(density(train$victims), main='', xlab='Num. of victims per Day', ylim=c(0, 0.055), lwd=2)
+lines(density(test$victims), col=2, lwd=2)
+lines(density(nonp.pred.victims), col=7, lwd=2)
+legend("topright", 
+       legend = c("Training Data", "Testing Data", "Non-parametric"),
+       col = c(1,2,7),
+       lty = 1, lwd=2
+)
+@
+
+
+\pagebreak
+\subsection{Decision Tree}
+
+<<fig=TRUE>>=
+victim.tree = tree(victims~month+day+temp+relhum+precip+wind.dir+wind.spd+visibility+pressure, data=train)
+plot(victim.tree)
+text(victim.tree, pretty=0, cex=0.5)
+summary(victim.tree)
+@
+
+
+<<fig=TRUE, eval=FALSE>>=
+#cut tree at 3 nodes
+victim.cv = cv.tree(victim.tree, FUN = prune.tree)
+plot(victim.cv, type="b")
+victim.pruned = prune.tree(victim.tree, best=3)
+summary(victim.pruned)
+#plot(q1.pruned)
+#text(q1.pruned, pretty = 0)
+@
+
+<<fig=TRUE>>=
+tree.pred = predict(victim.tree, newdata=test, type='vector')
+tree.mse = mean((tree.pred-test$victims)^2)
+cat('Decision Tree MSE:', tree.mse)
+
+#plotting fit
+plot(density(train$victims), main='', xlab='Num. of victims per Day', ylim=c(0, 0.055), lwd=2)
+lines(density(test$victims), col=2, lwd=2)
+lines(density(tree.pred), col=4, lwd=2)
+legend("topright", 
+       legend = c("Training Data", "Testing Data", "Decision Tree"),
+       col = c(1,2,4),
+       lty = 1, lwd=2
+)
+@
+
+
+
+
+
+\pagebreak
+\subsection{Random Forest}
+
+<<>>=
+victim.rf = randomForest(victims~month+day+temp+relhum+precip+wind.dir+wind.spd+visibility+pressure, data=train, importance=TRUE)
+victim.rf
+@
+
+
+<<fig=TRUE>>=
+rf.pred = predict(victim.rf, newdata=test)
+rf.mse = mean((rf.pred-test$victims)^2)
+cat('Random Forest MSE:', rf.mse)
+
+#plotting fit
+plot(density(train$victims), main='', xlab='Num. of victims per Day', ylim=c(0, 0.055), lwd=2)
+lines(density(test$victims), col=2, lwd=2)
+lines(density(tree.pred), col=4, lwd=2)
+lines(density(rf.pred), col=7, lwd=2)
+legend("topright", 
+       legend = c("Training Data", "Testing Data", "Decision Tree", "Random Forest"),
+       col = c(1,2,4,7),
+       lty = 1, lwd=2
+)
+@
+
+
+
+
+
+\pagebreak
+\subsection{Boosting}
+
+<<>>=
+victim.boost = gbm(victims~month+day+temp+relhum+precip+wind.dir+wind.spd+visibility+pressure, 
+                 data=train, n.trees=5000, interaction.depth=1, cv.folds=5)
+summary(victim.boost, las=1)
+@
+
+<<fig=TRUE>>=
+boost.pred = predict(victim.boost, newdata=test)
+boost.mse = mean((boost.pred-test$victims)^2)
+cat('Boosting MSE:', boost.mse)
+
+#plotting fit
+plot(density(train$victims), main='', xlab='Num. of victims per Day', ylim=c(0, 0.055), lwd=2)
+lines(density(test$victims), col=2, lwd=2)
+lines(density(boost.pred), col=4, lwd=2)
+legend("topright", 
+       legend = c("Training Data", "Testing Data", "Boosting"),
+       col = c(1,2,4),
+       lty = 1, lwd=2
+)
+@
+
+
+
+
+
+
+
+\pagebreak
+\subsection{Regression Summary}
+
+
+<<eval=TRUE>>=
+#table summarizing all MSEs
+cat('All model MSEs:')
+all.mses = data.frame(
+  'MLR' = mlr.mse,
+  'GLM' = glm.mse,
+  'NP' = np.mse,
+  'Tree' = tree.mse,
+  'RF' = rf.mse,
+  'Boosting' = boost.mse
+)
+row.names(all.mses) = ''
+all.mses
+@
+
+
+\vspace{6pc}
+
+
+Winner: GLM (again)!
+
+
+
+
+
+
+\pagebreak
+\section{Answering Hypotheses}
+
+\subsection{Visibility on a given day will be inversely correlated with \# of crashes per day.}
+
+
+
+
+
+
+\pagebreak
+\subsection{Temperature will have a weak correlation with \# of crashes per day (people drive more recklessly in the summer? also tourism = more traffic in summer).}
+
+
+
+
+
+
+
+\pagebreak
+\subsection{Precipitation will be correlated with \# of crashes per day.} 
+
+
+
+
+
+
+
+\pagebreak
+\subsection{Summer will have more crashes involving cyclists and motorcyclists.} 
+
+
+
+
+
+
+
+
+\pagebreak
+\subsection{Crash fatality will be higher on weekends when more people are driving under the influence.} 
 
 
 
@@ -158,22 +737,17 @@ summary(crashes.glm)
 
 
 \pagebreak
-\section{Answering Hypotheses}
+\subsection{Fatal, more severe crashes occur proportionately more often at nighttime, as visibility is reduced due to lack of sunlight.} 
 
 
-1. Visibility on a given day will be inversely correlated with \# of crashes per day.
 
-2. Temperature will have a weak correlation with \# of crashes per day (people drive more recklessly in the summer? also tourism = more traffic in summer). 
 
-3. Precipitation will be correlated with \# of crashes per day. 
 
-4. Summer will have more crashes involving cyclists and motorcyclists. 
 
-5. Crash fatality will be higher on weekends when more people are driving under the influence. 
 
-6. Fatal, more severe crashes occur proportionately more often at nighttime, as visibility is reduced due to lack of sunlight. 
 
-8. Single-vehicle crashes should be more proportionally higher during adverse weather, especially snow/ice conditions. 
+\pagebreak
+\subsection{Single-vehicle crashes should be more proportionally higher during adverse weather, especially snow/ice conditions.}
 
 
 

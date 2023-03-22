@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2022.10.13)  21 MAR 2023 09:25
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2022.10.13)  22 MAR 2023 15:56
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -477,7 +477,13 @@ LaTeX Info: Redefining \nameref on input line 24.
 \openout4 = `regression.out'.
 
  (./regression-concordance.tex)
-(./regression.toc)
+(./regression.toc
+Overfull \hbox (7.79103pt too wide) in paragraph at lines 26--26
+ [][] [][][]\T1/aer/m/n/10.95 Single-vehicle crashes should be more pro-por-tio
+n-ally higher dur-ing ad-verse weather, 
+ []
+
+)
 \tf@toc=\write5
 \openout5 = `regression.toc'.
 
@@ -492,59 +498,170 @@ This may cause the page layout to be inconsistent, however.
 
 ]
 LaTeX Font Info:    Trying to load font information for T1+aett on input line 5
-4.
+2.
 
 (/usr/share/texlive/texmf-dist/tex/latex/ae/t1aett.fd
 File: t1aett.fd 1997/11/16 Font definitions for T1/aett.
 )
 LaTeX Font Info:    Trying to load font information for TS1+aett on input line 
-64.
+53.
 
 (/usr/share/R/share/texmf/tex/latex/ts1aett.fd
 File: ts1aett.fd 
 )
 LaTeX Font Info:    Trying to load font information for TS1+cmtt on input line 
-64.
+53.
 
 (/usr/share/texlive/texmf-dist/tex/latex/base/ts1cmtt.fd
 File: ts1cmtt.fd 2019/12/16 v2.5j Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `TS1/aett/m/n' in size <10.95> not available
-(Font)              Font shape `TS1/cmtt/m/n' tried instead on input line 64.
- [2]
-<regression-005.pdf, id=50, 433.62pt x 433.62pt>
-File: regression-005.pdf Graphic file (type pdf)
-<use regression-005.pdf>
-Package pdftex.def Info: regression-005.pdf  used on input line 125.
+(Font)              Font shape `TS1/cmtt/m/n' tried instead on input line 53.
+<regression-004.pdf, id=148, 433.62pt x 433.62pt>
+File: regression-004.pdf Graphic file (type pdf)
+<use regression-004.pdf>
+Package pdftex.def Info: regression-004.pdf  used on input line 103.
 (pdftex.def)             Requested size: 362.37569pt x 362.39232pt.
- [3] [4 <./regression-005.pdf>] [5] [6]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 164.
- [7]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 164.
+ [2] [3 <./regression-004.pdf>]
+<regression-007.pdf, id=164, 433.62pt x 433.62pt>
+File: regression-007.pdf Graphic file (type pdf)
+<use regression-007.pdf>
+Package pdftex.def Info: regression-007.pdf  used on input line 129.
+(pdftex.def)             Requested size: 362.37569pt x 362.39232pt.
+ [4 <./regression-007.pdf>]
+<regression-011.pdf, id=175, 433.62pt x 433.62pt>
+File: regression-011.pdf Graphic file (type pdf)
+<use regression-011.pdf>
+Package pdftex.def Info: regression-011.pdf  used on input line 204.
+(pdftex.def)             Requested size: 362.37569pt x 362.39232pt.
+ [5] [6 <./regression-011.pdf>]
+<regression-014.pdf, id=189, 433.62pt x 433.62pt>
+File: regression-014.pdf Graphic file (type pdf)
+<use regression-014.pdf>
+Package pdftex.def Info: regression-014.pdf  used on input line 230.
+(pdftex.def)             Requested size: 362.37569pt x 362.39232pt.
+ [7 <./regression-014.pdf>]
+<regression-015.pdf, id=200, 433.62pt x 433.62pt>
+File: regression-015.pdf Graphic file (type pdf)
+<use regression-015.pdf>
+Package pdftex.def Info: regression-015.pdf  used on input line 241.
+(pdftex.def)             Requested size: 362.37569pt x 362.39232pt.
+<regression-016.pdf, id=201, 433.62pt x 433.62pt>
+File: regression-016.pdf Graphic file (type pdf)
+<use regression-016.pdf>
+Package pdftex.def Info: regression-016.pdf  used on input line 266.
+(pdftex.def)             Requested size: 362.37569pt x 362.39232pt.
+ [8 <./regression-015.pdf>] [9 <./regression-016.pdf>]
+<regression-019.pdf, id=220, 433.62pt x 433.62pt>
+File: regression-019.pdf Graphic file (type pdf)
+<use regression-019.pdf>
+Package pdftex.def Info: regression-019.pdf  used on input line 335.
+(pdftex.def)             Requested size: 362.37569pt x 362.39232pt.
+ [10]
+[11 <./regression-019.pdf>]
+<regression-020.pdf, id=234, 433.62pt x 433.62pt>
+File: regression-020.pdf Graphic file (type pdf)
+<use regression-020.pdf>
+Package pdftex.def Info: regression-020.pdf  used on input line 374.
+(pdftex.def)             Requested size: 362.37569pt x 362.39232pt.
+ [12] [13 <./regression-020.pdf>]
+<regression-021.pdf, id=249, 433.62pt x 433.62pt>
+File: regression-021.pdf Graphic file (type pdf)
+<use regression-021.pdf>
+Package pdftex.def Info: regression-021.pdf  used on input line 397.
+(pdftex.def)             Requested size: 362.37569pt x 362.39232pt.
+<regression-023.pdf, id=250, 433.62pt x 433.62pt>
+File: regression-023.pdf Graphic file (type pdf)
+<use regression-023.pdf>
+Package pdftex.def Info: regression-023.pdf  used on input line 406.
+(pdftex.def)             Requested size: 362.37569pt x 362.39232pt.
+ [14 <./regression-021.pdf>] [15 <./regression-023.pdf>]
+<regression-025.pdf, id=269, 433.62pt x 433.62pt>
+File: regression-025.pdf Graphic file (type pdf)
+<use regression-025.pdf>
+Package pdftex.def Info: regression-025.pdf  used on input line 434.
+(pdftex.def)             Requested size: 362.37569pt x 362.39232pt.
+ [16 <./regression-025.pdf>]
+<regression-027.pdf, id=279, 433.62pt x 433.62pt>
+File: regression-027.pdf Graphic file (type pdf)
+<use regression-027.pdf>
+Package pdftex.def Info: regression-027.pdf  used on input line 466.
+(pdftex.def)             Requested size: 362.37569pt x 362.39232pt.
+ [17 <./regression-027.pdf>] [18]
+<regression-030.pdf, id=293, 433.62pt x 433.62pt>
+File: regression-030.pdf Graphic file (type pdf)
+<use regression-030.pdf>
+Package pdftex.def Info: regression-030.pdf  used on input line 551.
+(pdftex.def)             Requested size: 362.37569pt x 362.39232pt.
+ [19] [20 <./regression-030.pdf>]
+<regression-034.pdf, id=309, 433.62pt x 433.62pt>
+File: regression-034.pdf Graphic file (type pdf)
+<use regression-034.pdf>
+Package pdftex.def Info: regression-034.pdf  used on input line 635.
+(pdftex.def)             Requested size: 362.37569pt x 362.39232pt.
+ [21] [22 <./regression-034.pdf>]
+<regression-035.pdf, id=323, 433.62pt x 433.62pt>
+File: regression-035.pdf Graphic file (type pdf)
+<use regression-035.pdf>
+Package pdftex.def Info: regression-035.pdf  used on input line 674.
+(pdftex.def)             Requested size: 362.37569pt x 362.39232pt.
+ [23] [24 <./regression-035.pdf>]
+<regression-036.pdf, id=337, 433.62pt x 433.62pt>
+File: regression-036.pdf Graphic file (type pdf)
+<use regression-036.pdf>
+Package pdftex.def Info: regression-036.pdf  used on input line 694.
+(pdftex.def)             Requested size: 362.37569pt x 362.39232pt.
+<regression-038.pdf, id=338, 433.62pt x 433.62pt>
+File: regression-038.pdf Graphic file (type pdf)
+<use regression-038.pdf>
+Package pdftex.def Info: regression-038.pdf  used on input line 703.
+(pdftex.def)             Requested size: 362.37569pt x 362.39232pt.
+ [25 <./regression-036.pdf>] [26 <./regression-038.pdf>]
+<regression-040.pdf, id=358, 433.62pt x 433.62pt>
+File: regression-040.pdf Graphic file (type pdf)
+<use regression-040.pdf>
+Package pdftex.def Info: regression-040.pdf  used on input line 731.
+(pdftex.def)             Requested size: 362.37569pt x 362.39232pt.
+ [27 <./regression-040.pdf>]
+<regression-042.pdf, id=368, 433.62pt x 433.62pt>
+File: regression-042.pdf Graphic file (type pdf)
+<use regression-042.pdf>
+Package pdftex.def Info: regression-042.pdf  used on input line 763.
+(pdftex.def)             Requested size: 362.37569pt x 362.39232pt.
+ [28 <./regression-042.pdf>]
+[29] [30] [31] [32] [33] [34] [35]
+Overfull \hbox (8.83331pt too wide) in paragraph at lines 856--856
+[]\T1/aer/b/n/12 Single-vehicle crashes should be more pro-por-tion-ally higher
+ dur-ing ad-verse weather,
+ []
+
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 860.
+[36]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 860.
  (./regression.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 164.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 164.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 860.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 860.
 Package rerunfilecheck Info: File `regression.out' has not changed.
-(rerunfilecheck)             Checksum: 58C6E08EFB31F2377A39378345AC9530;398.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 164.
+(rerunfilecheck)             Checksum: 38B31063BCF18943D8896C415982EA7B;2317.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 860.
  ) 
 Here is how much of TeX's memory you used:
- 8615 strings out of 483183
- 132048 string characters out of 5966291
- 395646 words of memory out of 5000000
- 23421 multiletter control sequences out of 15000+600000
+ 8792 strings out of 483183
+ 135557 string characters out of 5966291
+ 398646 words of memory out of 5000000
+ 23549 multiletter control sequences out of 15000+600000
  559243 words of font info for 74 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 41i,11n,45p,272b,324s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 41i,12n,45p,298b,361s stack positions out of 5000i,500n,10000p,200000b,80000s
  </home/jonah/.texlive2019/texmf-var/fonts/pk/ljfour/jknappen/ec/tctt1095.600
 pk></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmb10.pfb></us
 r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmcsc10.pfb></usr/sha
 re/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texl
 ive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb>
-Output written on regression.pdf (7 pages, 107842 bytes).
+Output written on regression.pdf (36 pages, 498473 bytes).
 PDF statistics:
- 102 PDF objects out of 1000 (max. 8388607)
- 84 compressed objects within 1 object stream
- 15 named destinations out of 1000 (max. 500000)
- 58 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 447 PDF objects out of 1000 (max. 8388607)
+ 361 compressed objects within 4 object streams
+ 64 named destinations out of 1000 (max. 500000)
+ 308 words of extra memory for PDF output out of 10000 (max. 10000000)
 
