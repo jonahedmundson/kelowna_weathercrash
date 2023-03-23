@@ -516,6 +516,8 @@ data.frame(
   'Avg crash visibility' = mean(alldata$'Visibility..km.', na.rm = TRUE),
   'Avg cyclist crash visibility' = mean(cyclist$'Visibility..km.', na.rm = TRUE)
 )
+cat('-----------------\nTop 5 Most Common Crash Types:')
+table(cyclist$Derived.Crash.Configuration)[order(table(cyclist$Derived.Crash.Configuration), decreasing = TRUE)][1:5]
 rm(cyclist)
 @
 
@@ -572,6 +574,8 @@ data.frame(
   'Avg crash visibility' = mean(alldata$'Visibility..km.', na.rm = TRUE),
   'Avg animal crash visibility' = mean(animal$'Visibility..km.', na.rm = TRUE)
 )
+cat('-----------------\nTop 5 Most Common Crash Types:')
+table(animal$Derived.Crash.Configuration)[order(table(animal$Derived.Crash.Configuration), decreasing = TRUE)][1:5]
 rm(animal)
 @
 
@@ -625,6 +629,8 @@ data.frame(
   'Avg crash visibility' = mean(alldata$'Visibility..km.', na.rm = TRUE),
   'Avg heavy crash visibility' = mean(heavy$'Visibility..km.', na.rm = TRUE)
 )
+cat('-----------------\nTop 5 Most Common Crash Types:')
+table(heavy$Derived.Crash.Configuration)[order(table(heavy$Derived.Crash.Configuration), decreasing = TRUE)][1:5]
 rm(heavy)
 @
 
@@ -678,6 +684,8 @@ data.frame(
   'Avg crash visibility' = mean(alldata$'Visibility..km.', na.rm = TRUE),
   'Avg motorcycle crash visibility' = mean(motorcycle$'Visibility..km.', na.rm = TRUE)
 )
+cat('-----------------\nTop 5 Most Common Crash Types:')
+table(motorcycle$Derived.Crash.Configuration)[order(table(motorcycle$Derived.Crash.Configuration), decreasing = TRUE)][1:5]
 rm(motorcycle)
 @
 
@@ -731,6 +739,8 @@ data.frame(
   'Avg crash visibility' = mean(alldata$'Visibility..km.', na.rm = TRUE),
   'Avg parked crash visibility' = mean(parked$'Visibility..km.', na.rm = TRUE)
 )
+cat('-----------------\nTop 5 Most Common Crash Types:')
+table(parked$Derived.Crash.Configuration)[order(table(parked$Derived.Crash.Configuration), decreasing = TRUE)][1:5]
 rm(parked)
 @
 
@@ -784,6 +794,8 @@ data.frame(
   'Avg crash visibility' = mean(alldata$'Visibility..km.', na.rm = TRUE),
   'Avg pedestrian crash visibility' = mean(pedestrian$'Visibility..km.', na.rm = TRUE)
 )
+cat('-----------------\nTop 5 Most Common Crash Types:')
+table(pedestrian$Derived.Crash.Configuration)[order(table(pedestrian$Derived.Crash.Configuration), decreasing = TRUE)][1:5]
 rm(pedestrian)
 @
 
@@ -809,7 +821,7 @@ Notice that rows are a bit weird/unintuitive for this dataset. Each row is a uni
 <<fig=TRUE>>=
 cat('Variables:')
 names(regdata)
-pairs(regdata[,c('crashes','month', 'day','temp','relhum','precip','visibility')])
+pairs(regdata[,c('crashes','month', 'day','temp','relhum','precip','visibility')], upper.panel = function(x,y) panel.smooth(x,y,lwd=2,span=0.8))
 @
 
 

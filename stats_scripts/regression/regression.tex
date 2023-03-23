@@ -798,15 +798,18 @@ Winner: GLM (again)!
 
 \subsection{Visibility on a given day will be inversely correlated with \# of crashes per day.}
 
+This is true. The GLM (with outlier removed) shows a statistically significant coefficient estimate of -4.1926, meaning that visibility and \# of crashes per day is, indeed, inversely related. 
 
-
-
+\includegraphics{regression-044}
 
 
 \pagebreak
 \subsection{Temperature will have a weak correlation with \# of crashes per day (people drive more recklessly in the summer? also tourism = more traffic in summer).}
 
 
+This is false. The GLM shows that temperature is not a statistically significant predictor, and the months that increase the \# of crashes the most are in the winter: January \& December. 
+
+\includegraphics{regression-045}
 
 
 
@@ -815,9 +818,9 @@ Winner: GLM (again)!
 \pagebreak
 \subsection{Precipitation will be correlated with \# of crashes per day.} 
 
+This is unclear. While the GLM does show increasing precipitation to be associated with increasing \# of crashes (0.434), this relationship is not statistically significant (p=0.332). Perhaps with more data (or if the current data was not anonymized), this trend would be confirmed. 
 
-
-
+\includegraphics{regression-046}
 
 
 
@@ -825,8 +828,65 @@ Winner: GLM (again)!
 \subsection{Summer will have more crashes involving cyclists and motorcyclists.} 
 
 
+A cursory glance at the variable investigation document will confirm this. 
+\par
+We can also cluster the months based on season and perform a proper hypothesis test:
 
+\begin{Schunk}
+\begin{Soutput}
+Cyclist ANOVA:
+\end{Soutput}
+\begin{Soutput}
+            Df Sum Sq Mean Sq F value  Pr(>F)   
+season       3   3539  1179.6   7.714 0.00955 **
+Residuals    8   1223   152.9                   
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+\end{Soutput}
+\begin{Soutput}
+  Tukey multiple comparisons of means
+    95% family-wise confidence level
 
+Fit: aov(formula = bike ~ season, data = kwt)
+
+$season
+                   diff        lwr           upr     p adj
+Spring-Fall   -13.00000 -45.333361  1.933336e+01 0.5946617
+Summer-Fall    14.33333 -18.000028  4.666669e+01 0.5223532
+Winter-Fall   -32.33333 -64.666694  2.757948e-05 0.0500002
+Summer-Spring  27.33333  -5.000028  5.966669e+01 0.1005671
+Winter-Spring -19.33333 -51.666694  1.300003e+01 0.2944622
+Winter-Summer -46.66667 -79.000028 -1.433331e+01 0.0073984
+\end{Soutput}
+\begin{Soutput}
+Motorcycle ANOVA:
+\end{Soutput}
+\begin{Soutput}
+            Df Sum Sq Mean Sq F value  Pr(>F)   
+season       3   9249    3083   10.04 0.00435 **
+Residuals    8   2456     307                   
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+\end{Soutput}
+\begin{Soutput}
+  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = motorcycle ~ season, data = kwt)
+
+$season
+                     diff         lwr       upr     p adj
+Spring-Fall     0.6666667  -45.146744  46.48008 0.9999604
+Summer-Fall    43.3333333   -2.480078  89.14674 0.0638450
+Winter-Fall   -35.0000000  -80.813411  10.81341 0.1447832
+Summer-Spring  42.6666667   -3.146744  88.48008 0.0681892
+Winter-Spring -35.6666667  -81.480078  10.14674 0.1357137
+Winter-Summer -78.3333333 -124.146744 -32.51992 0.0026273
+\end{Soutput}
+\end{Schunk}
+\includegraphics{regression-047}
+
+In summary, yes, summer months have significantly more cyclist and motorcycle accidents (than winter months). 
 
 
 
@@ -834,10 +894,15 @@ Winner: GLM (again)!
 \pagebreak
 \subsection{Crash fatality will be higher on weekends when more people are driving under the influence.} 
 
+This is false. By looking at the barplot of accidents throughout the week in the Variable Investigation document, it is clear that there are more crashes on weekdays (Mon-Fri) compared to weekends (Sat-Sun), with the \# of crashes slowly climbing throughout the week. This is the reverse of what was expected. 
 
 
-
-
+\begin{Schunk}
+\begin{Soutput}
+Reprint of plot from Variable Investigation:
+\end{Soutput}
+\end{Schunk}
+\includegraphics{regression-048}
 
 
 
@@ -845,15 +910,66 @@ Winner: GLM (again)!
 \pagebreak
 \subsection{Fatal, more severe crashes occur proportionately more often at nighttime, as visibility is reduced due to lack of sunlight.} 
 
+By looking at the barplot of accidents throughout the day in the Variable Investigation document, it is clear that more accidents happen during the daytime. However, this is likely due to the fact that more people are driving and are on the roads during the day. Instead, we want to know if nighttime crashes are \textit{more fatal}. 
+\par
+To determine this, I will give each time block a crash:casualty ratio by dividing the number of fatalities by the number of crashes. This value can then be compared across time categories. I will define 9PM to 6AM as 'nighttime', and 6AM - 9PM as 'daytime'.
 
 
+\begin{Schunk}
+\begin{Soutput}
+Crash-Casualty Ratio ANOVA:
+\end{Soutput}
+\begin{Soutput}
+            Df   Sum Sq   Mean Sq F value Pr(>F)
+time         1 0.000508 0.0005079   0.206  0.666
+Residuals    6 0.014781 0.0024636               
+\end{Soutput}
+\end{Schunk}
+\includegraphics{regression-049}
+
+
+As you can see, there is no evidence that nighttime accidents are more fatal than daytime ones. 
 
 
 
 
 
 \pagebreak
-\subsection{Single-vehicle crashes should be more proportionally higher during adverse weather, especially snow/ice conditions.}
+\subsection{Single-vehicle crashes should be proportionally higher during adverse weather, especially snow/ice conditions.}
+
+This approach can be similar to the cyclist/motocycle hypothesis above. I will group by season and test for difference using an ANOVA:
+
+\begin{Schunk}
+\begin{Soutput}
+            Df Sum Sq Mean Sq F value  Pr(>F)   
+Season       3 105547   35182   10.09 0.00429 **
+Residuals    8  27905    3488                   
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+\end{Soutput}
+\begin{Soutput}
+  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = Count ~ Season, data = single)
+
+$Season
+                    diff        lwr       upr     p adj
+Spring-Fall   -175.00000 -329.42658 -20.57342 0.0275845
+Summer-Fall    -51.66667 -206.09325 102.75991 0.7152015
+Winter-Fall     83.66667  -70.75991 238.09325 0.3674538
+Summer-Spring  123.33333  -31.09325 277.75991 0.1240470
+Winter-Spring  258.66667  104.24009 413.09325 0.0029922
+Winter-Summer  135.33333  -19.09325 289.75991 0.0874337
+\end{Soutput}
+\end{Schunk}
+\includegraphics{regression-050}
+
+
+It appears that most single vehicle collisions occur in the fall and winter, which seems to confirm our hypothesis. However, spring has the least, whereas we have predicted summer to have the least. The winter-summer comparison barely fails to reject (p=0.087), making this hypothesis unclear. 
+
+
+
 
 
 

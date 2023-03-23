@@ -21,6 +21,6 @@
 \contentsline {subsection}{\numberline {3.2}Temperature will have a weak correlation with \# of crashes per day (people drive more recklessly in the summer? also tourism = more traffic in summer).}{31}{subsection.3.2}%
 \contentsline {subsection}{\numberline {3.3}Precipitation will be correlated with \# of crashes per day.}{32}{subsection.3.3}%
 \contentsline {subsection}{\numberline {3.4}Summer will have more crashes involving cyclists and motorcyclists.}{33}{subsection.3.4}%
-\contentsline {subsection}{\numberline {3.5}Crash fatality will be higher on weekends when more people are driving under the influence.}{34}{subsection.3.5}%
-\contentsline {subsection}{\numberline {3.6}Fatal, more severe crashes occur proportionately more often at nighttime, as visibility is reduced due to lack of sunlight.}{35}{subsection.3.6}%
-\contentsline {subsection}{\numberline {3.7}Single-vehicle crashes should be more proportionally higher during adverse weather, especially snow/ice conditions.}{36}{subsection.3.7}%
+\contentsline {subsection}{\numberline {3.5}Crash fatality will be higher on weekends when more people are driving under the influence.}{35}{subsection.3.5}%
+\contentsline {subsection}{\numberline {3.6}Fatal, more severe crashes occur proportionately more often at nighttime, as visibility is reduced due to lack of sunlight.}{36}{subsection.3.6}%
+\contentsline {subsection}{\numberline {3.7}Single-vehicle crashes should be proportionally higher during adverse weather, especially snow/ice conditions.}{37}{subsection.3.7}%
