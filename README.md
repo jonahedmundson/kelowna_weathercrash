@@ -2,6 +2,8 @@
 
 The purpose of this project is to investigate the relationship between local weather trends and vehicle accidents in the city of Kelowna.
 
+The GitHub for this project can be found [here](https://github.com/jonahedmundson/kelowna_weathercrash).
+
 **Table of Contents:**
 
 * Data Source
@@ -242,7 +244,7 @@ Relevant file: [TBA](./NULL).
 
 # Conclusion
 
-In summary, I performed a unique, locally relevant statistical analysis by combining two open-source datasets. Weather variables were successfully used to predict the number of vehicle collisions per day in Kelowna, BC. These variables were also used to test several hypotheses concerning the effect of weather on vehicle collisions. However, weather conditions seem to account for only 45% of the variance in vehicle collisions, which indicates that more research in this area is needed. 
+In summary, I performed a unique, locally relevant statistical analysis by combining two open-source datasets. Weather variables were successfully used to predict the number of vehicle collisions per day in Kelowna, BC. These variables were also used to test several hypotheses concerning the effect of weather on vehicle collisions. However, weather conditions seem to account for only 45% of the variance in vehicle collisions, which indicates that more research in this area is needed.
 
 
 # Other Relevant Studies
