@@ -2,6 +2,17 @@
 
 The purpose of this project is to investigate the relationship between local weather trends and vehicle accidents in the city of Kelowna.
 
+**Table of Contents:**
+
+* Data Source
+* Data Description
+* Data Cleaning
+* Statistical Analysis
+  * Variable Investigation
+  * Regression
+  * Neural Net (TBA)
+* Conclusion
+
 
 # Data Source
 
@@ -122,13 +133,20 @@ fatalities.
 
 Relevant file: [Data Cleaning](./stats_scripts/datacleaning/datacleaning.pdf).
 
+Two datasets were produced after cleaning:
+
+* `alldata`: matches averaged weather data onto each individual crash
+* `regdata`: matches combined crash data onto the weather data for each individual day (ie. reverse of `alldata`)
+
+
 ## Weather data
 
-
+The weather data was quite clean already. I added some indicator variables for weather type, but didn't end up using them in the analysis.
 
 
 ## Crash Data
 
+The crash data was also quite clean. The biggest takeaway here is that the Crash data is _anonymized_, meaning that I cannot directly link the exact weath conditions with each crash. Instead, weather data over 4-5 days is averaged (ex. all Mondays in October 2017), and then linked with all matching crashes.
 
 
 # Statistical Analysis
@@ -137,10 +155,83 @@ Relevant file: [Data Cleaning](./stats_scripts/datacleaning/datacleaning.pdf).
 
 Relevant file: [Variable Exploration](./stats_scripts/variableinvestigation/variableinvestigation.pdf).
 
+Variable exploration revealed that:
 
-## Regression 
+* weekdays have more collisions than weekends
+* spring months have the least collisions
+* dew point temperature and wind chill variables were removed due to high correlation with temperature
+* 20% of all crashes had at least 1 casualty
+* the most common crash types were 'Rear end' and 'Single vehicle'
+* collisions with cyclists are almost always fatal (80%)
+* Highway 97/Harvey Ave was consistently the most frequent location for collisions
+* there was one outlier point with an abnormally high number of crashes & victims: a Thursday in November, 2017. I believe this point to be somehow in connection with the 2017 BC floods
 
-Relevant file: [TBA](./NULL).
+
+![](./stats_scripts/readme_images/crashtemps.png "Figure 1")
+
+*Figure 1: Year-round temperatures compared with crash temperatures.*
+
+
+
+## Regression
+
+Relevant file: [Regression](./stats_scripts/regression/regression.pdf).
+
+### Predicting # of Crashes per Day
+
+In order to test model accuracy, data from 2017-2020 was considered training data, and the 2021 data was used as testing data. Multiple regression techniques were applied, and model error (MSE) was used to compare models. The Generalized Linear Model (Gaussian family, identity link) approach had the lowest MSE, meaning that it had the highest prediction accuracy for the 2021 data. However, even this model was only able to account for ~45% of the variance in collision count. This indicates that there are other variables not included in this dataset that are helping to determine how many collisions will occur on any given day.
+
+Statistically significant predictors in the GLM (for predicting the \# of crashes per day) included:
+
+* Month
+* Day of the week
+* Relative humidity
+* Wind direction
+* Wind speed
+* Visibility
+
+
+![](./stats_scripts/readme_images/model_comparison.png "Figure 2")
+
+*Figure 2: Comparison of the fit of several modelling approaches.*
+
+
+
+![](./stats_scripts/readme_images/all_mses.png "Figure 3")
+
+*Figure 3: Comparison of MSEs from all regression approaches.*
+
+
+
+
+### Predicting # of Victims per Day
+
+The \# of victims per day is highly correlated with the \# of crashes per day, so the modelling for this response variable went quite similar as for the \# of crashes. Same as for the crashes, the GLM approach won out in predicting \# of victims. See the relevant file for more information.
+
+
+### Answering Hypotheses
+
+Insights from this section include:
+
+* Visibility on a given day is inversely correlated with the \# of crashes per day.
+* Temperature is (surprisingly) *not* a statistically significant predictor of the \# of crashes per day.
+* It is unclear whether or not precipitation is a statistically significant predictor of the \# of crashes per day.
+* Summer has more crashes involving cyclists and motorcyclists.
+* The \# of crashes does not increase on the weekends (due to DUIs).
+* Crash fatality (chance of a casualty crash) does not increase at nighttime.
+* Winter has the most single vehicle collisions, but this (barely) isn't statistically different than summer months.
+
+
+![](./stats_scripts/readme_images/singlevehicle.png "Figure 4")
+
+*Figure 4: The number of single vehicle collisons by season.*
+
+
+![](./stats_scripts/readme_images/anova_thsd.png "Figure 5")
+
+*Figure 5: ANOVA and Tukey HSD results for testing if there is a difference in the number of single vehicle collisons by season. The Spring-Fall and Winter-Spring comparisons are statistically significant, but the Winter-Summer comparison is not.*
+
+
 
 
 ## Machine Learning Approach
@@ -148,13 +239,10 @@ Relevant file: [TBA](./NULL).
 Relevant file: [TBA](./NULL).
 
 
-# Results and Discussion
-
-
-
 
 # Conclusion
 
+In summary, I performed a unique, locally relevant statistical analysis by combining two open-source datasets. Weather variables were successfully used to predict the number of vehicle collisions per day in Kelowna, BC. These variables were also used to test several hypotheses concerning the effect of weather on vehicle collisions. However, weather conditions seem to account for only 45% of the variance in vehicle collisions, which indicates that more research in this area is needed. 
 
 
 # Other Relevant Studies

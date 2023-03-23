@@ -395,7 +395,7 @@ alldata %>%
 \pagebreak
 \subsection{Air Pressure}
 
-<<>>=
+<<fig=TRUE>>=
 data.frame(
   'Avg air pressure' = mean(weatherdata$Stn.Press..kPa., na.rm=TRUE),
   'Avg crash air pressure' = mean(alldata$Stn.Press..kPa., na.rm = TRUE)
